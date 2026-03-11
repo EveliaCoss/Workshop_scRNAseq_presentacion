@@ -1,0 +1,6 @@
+"0",""
+"0","# Funcionalidades de los chunks, pone un triangulito junto a la línea que se señala"
+"0","xaringanExtra::use_extra_styles("
+"0","  hover_code_line = TRUE,         #<<"
+"0","  mute_unhighlighted_code = TRUE  #<<"
+"0",")"
