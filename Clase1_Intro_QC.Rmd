@@ -308,10 +308,22 @@ knitr::include_graphics("figures/plataformas.png")
 
 ---
 
+## Sistema de microfluidos de [10x Genomics](https://www.10xgenomics.com/products/universal-three-prime-gene-expression)
+
+```{r, echo=FALSE, out.width='90%', fig.align='center'}
+knitr::include_graphics("figures/10x_genomics_exp1.png")
+```
+
+.footnote-right[
+Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
+]
+
+---
+
 ## Barcoding en la secuenciación con [10x Genomics 3’](https://www.10xgenomics.com/products/universal-three-prime-gene-expression)
 
 .pull-left[
-- **Cell barcodes:** cada célula recibe un identificador único, lo que permite distinguir de qué célula proviene cada transcrito.
+- **Cell barcodes (CB):** cada célula recibe un identificador único, lo que permite distinguir de qué célula proviene cada transcrito.
 - **UMIs (Unique Molecular Identifiers):** cada molécula de ARN dentro de la célula recibe un identificador adicional para evitar contar duplicados generados por la PCR.
 - **Captura en el 3’ end:** se utilizan oligonucleótidos con **poli-T** que hibridan con la cola poli-A del mRNA.
 
@@ -336,6 +348,23 @@ knitr::include_graphics("figures/two-droplets.png")
 
 .footnote-right[Imagen tomada de:
 [Intro to scRNA-seq](https://umich-brcf-bioinf.github.io/workshop-intro-single-cell/release/html/00A-OrientingOnScRNASeq.html)]
+
+---
+
+## Secuenciación En 10x Genomics
+
+- Generalmente se usa *paired-end*.
+  + **Read 1:** contiene CB + UMI.
+  + **Read 2:** contiene la secuencia del transcrito.
+- Lista de los barcodes válidos: [Whitelist file](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html#chromium-versions-and-cell-barcode-whitelists)
+
+```{r, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("figures/10x_sequencing_reads.png")
+```
+
+.footnote-right[
+[Intro to scRNA-seq](https://umich-brcf-bioinf.github.io/workshop-intro-single-cell/release/html/00A-OrientingOnScRNASeq.html); [Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html); Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
+]
 
 ---
 class: inverse, center, middle
@@ -384,19 +413,6 @@ class: inverse, center, middle
 - Para comparar condiciones, se puede usar **hashing o multiplexing de muestras** (ej. CITE-seq, MULTI-seq), donde cada muestra recibe un código adicional.
 - Minimizar *batch effect* incluyendo condiciones en la misma corrida.
 - **Corrección computacional** posterior si hay múltiples lotes.
-
-.footnote-right[
-[Intro to scRNA-seq](https://umich-brcf-bioinf.github.io/workshop-intro-single-cell/release/html/00A-OrientingOnScRNASeq.html); [Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html)
-]
-
----
-
-## Secuenciación En 10x Genomics
-
-- Generalmente se usa *paired-end*.
-  + **Read 1:** contiene CB + UMI.
-  + **Read 2:** contiene la secuencia del transcrito.
-  + Tamaños: [Whitelist file](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html#chromium-versions-and-cell-barcode-whitelists)
 
 .footnote-right[
 [Intro to scRNA-seq](https://umich-brcf-bioinf.github.io/workshop-intro-single-cell/release/html/00A-OrientingOnScRNASeq.html); [Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html)
@@ -466,8 +482,8 @@ knitr::include_graphics("figures/scRNAseq_workflow_v2_p2.png")
 
 ## Paso 1. Preprocesamiento
 
-- **Alineamiento o pseudoalineamiento** de lecturas (`Cell Ranger, STARsolo, kallisto|bustools`).
-- Generación de la **matriz de expresión** (genes × células).
+- A. **Alineamiento y conteo**: `Cell Ranger (count), STARsolo, Subread cellCounts`.
+- B. **Pseudoalineamiento y conteo **: `Salmon - Alevin, kallisto - Bustools`, 
 
 .pull-left[
 ### En 10x Genomics:
@@ -494,14 +510,43 @@ knitr::include_graphics("figures/cellranger.png")
 ]
 
 .footnote-right[
-[Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html); [Yu *et al.* 2022. Methods Mol Biol](https://pmc.ncbi.nlm.nih.gov/articles/PMC7771369/);
+[Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html); [Yu *et al.* 2022. Methods Mol Biol](https://pmc.ncbi.nlm.nih.gov/articles/PMC7771369/); [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
 ]
 
 ---
 
-## Referencias empleadas en Cell Ranger
+## 📌 ¿Qué es `Cell Ranger`?
 
-- Cell Ranger prepara referencias usando el genoma primario y filtrando la anotación GTF para quedarse solo con genes relevantes
+.pull-left[
+- Software de 10x Genomics para análisis de datos de single-cell RNA-seq y otras aplicaciones.
+- Procesa datos crudos provenientes de secuenciadores (FASTQ/BCL) y genera matrices de expresión.
+- Incluye múltiples pipelines especializados según el tipo de experimento.
+
+⚙️ Requisitos técnicos
+- **Alto consumo de memoria y CPU:** recomendado instalar en servidores o clusters.
+- Compatible con Linux (Ubuntu/CentOS).
+- Se integra con **Loupe Browser**, herramienta gráfica para explorar resultados.
+]
+
+.pull-right[
+.content-box-blue[ 
+- `cellranger count` → genera matrices de expresión a partir de FASTQ.
+- `cellranger vdj` → analiza receptores inmunes (TCR/BCR).
+- `cellranger aggr` → combina múltiples muestras y realiza corrección de lotes.
+- `cellranger reanalyze` → permite aplicar nuevos parámetros a resultados previos.
+- `cellranger multi` → soporta multiplexing de muestras.
+]
+]
+
+.footnote-right[
+[Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#23); [Cell Ranger](https://www.10xgenomics.com/support/software/cell-ranger/9.0?utm_source=copilot.com)
+]
+
+---
+
+## Referencias empleadas en `Cell Ranger` (10x Genomics)
+
+- `Cell Ranger` prepara referencias usando el *genoma primario* y filtrando la *anotación GTF* para quedarse solo con genes relevantes
 - Filtrado de **biotipos:**
   + Retiene: Protein coding (codificantes de proteínas), Long noncoding RNA (lncRNA), Antisense RNA, Genes de BCR/TCR (V/D/J), 
   + Elimina: Pseudogenes y Small noncoding RNAs (snRNA, miRNA, etc.).
@@ -541,6 +586,153 @@ Interpretación de las columnas:
 .footnote-right[
 [Processing Raw scRNA-Seq Sequencing Data: From Reads to a Count Matrix](https://www.singlecellcourse.org/processing-raw-scrna-seq-sequencing-data-from-reads-to-a-count-matrix.html)
 ]
+
+---
+
+class: inverse, center, middle
+
+`r fontawesome::fa("code", height = "3em")`
+# Cell Ranger - Output files
+
+---
+
+## Cell Ranger: Outputs
+
+.pull-left[
+Después de correr el comando `cellranger count`, se crea una carpeta con el nombre que diste en el flag `--id`. Dentro de esa carpeta está el subdirectorio `outs/`, que es donde se guardan todos los resultados.
+
+- **filtered_feature_bc_matrix/** → matriz de expresión filtrada (solo células válidas).
+- **raw_feature_bc_matrix/** → matriz sin filtrar (incluye barcodes de fondo).
+- **web_summary.html** → reporte interactivo con métricas de calidad.
+- **metrics_summary.csv** → tabla con estadísticas clave (lecturas por célula, saturación de UMIs, etc.).
+- **cloupe.cloupe** → archivo para abrir en Loupe Browser y explorar clusters.
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/CellRanger_outputs.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#34)
+]
+
+---
+
+.pull-left[
+
+## Conteo de Droplets (gotas)
+
+- El resultado de estas herramientas es una matriz de señal atribuida a **células y genes** (normalmente conteos de lecturas).
+- `cellranger count`
+- Esta matriz sirve como entrada para el procesamiento posterior.
+- 💾 La matriz de salida suele almacenarse en formatos comprimidos como:
+  + **MEX (Market Exchange Format)**
+  + **HDF5 (Hierarchical Data Format)**
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/countingDrops.png")
+```
+]
+
+.footnote-right[
+[Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
+]
+---
+
+## Formato **MEX (Market Exchange Format)**
+
+.pull-left[
+- Es una manera estándar y ligera de almacenar **matrices de expresión génica** (UMIs o lecturas) asociadas a genes/transcritos y barcodes de células.
+- [Cell Ranger Feature Barcode Matrices (MEX Format)](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-mex-matrices)
+- Formato de texto plano/comprimido
+- Empleado en `Cell Ranger` de 10x Genomics.
+- Separación clara: 
+  + **filas** = genes/transcritos (features)
+  + **columnas** = células/barcodes
+]
+
+.pull-right[
+.content-box-blue[
+- Estructura de archivos:
+  + `matrix.mtx` → archivo en formato Matrix Market que contiene la matriz dispersa de conteos.
+  + `barcodes.tsv` → lista de barcodes (identificadores de células).
+  + `features.tsv` (o genes.tsv) → lista de genes o transcritos.
+]  
+  
+```{r, echo=FALSE, out.width='60%', fig.align='center'}
+knitr::include_graphics("figures/Mexformat.png")
+```
+]
+
+.footnote-right[
+[Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
+]
+
+---
+
+## `features.tsv.gz`
+
+.pull-left[
+- **ID del feature** → normalmente el identificador del gen (por ejemplo, ENSG00000141510).
+- **Nombre del feature (gene_id del GTF)** → el símbolo del gen o el nombre de la molécula (por ejemplo, TP53, BRCA1).
+- **Tipo de feature** → aquí es donde se especifica si el feature corresponde a:
+ + Gene Expression
+ + Antibody Capture
+ + CRISPR Guide Capture
+ + Multiplexing Capture
+ + CUSTOM
+
+]
+
+.pull-right[
+
+```{bash, eval=FALSE}
+gzip -cd filtered_feature_bc_matrix/features.tsv.gz
+
+ENSG00000141510       TP53         Gene Expression
+ENSG00000012048       BRCA1        Gene Expression
+ENSG00000139687       RB1          Gene Expression
+CD3_GCCTGACTAGATCCA   CD3          Antibody Capture
+CD19_CGTGCAACACTCGTA  CD19         Antibody Capture
+```
+]
+
+.footnote-right[
+[Cell Ranger Feature Barcode Matrices (MEX Format)](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-mex-matrices)
+]
+---
+
+## Formato **HDF5 (Hierarchical Data Format)**/Loom
+
+.pull-left[
+- ⚡ Formato optimizado para *big data* → diseñado para manejar datasets muy grandes de manera eficiente.
+- 📊 Contiene la información de la matriz junto con datos de **filas y columnas (barcodes de células y features de genes/transcritos).**
+- *🔄 Versión Loom* → una variante popular del HDF5 en transcriptómica de célula única.
+- 💻 Eficiente programáticamente → permite acceso rápido y flexible desde lenguajes como Python o R mediante librerías especializadas.
+- 📦 Almacenamiento **binario jerárquico** → más compacto que texto plano y con mejor rendimiento en lectura/escritura.
+- [Cell Ranger Molecule Info (HDF5 File)](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-molecule-info)
+]
+
+.pull-right[
+  
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/Loom_components.png")
+```
+]
+
+.footnote-right[
+[Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#11)
+]
+
+---
+
+class: inverse, center, middle
+
+`r fontawesome::fa("code", height = "3em")`
+# Control de Calidad
 
 ---
 
@@ -587,7 +779,167 @@ knitr::include_graphics("figures/problem-droplets.png")
 
 ---
 
-## knee point / Gráfica en forma de "codo" (knee):
+## Ejemplo: Reporte de Cell Ranger 
+
+.pull-left[
+### Calidad de mapeo y secuenciación
+El *dataset pbmc4k* proviene de **células mononucleares de sangre periférica (PBMCs) humanas**, con un total de **4,340 células con buena calidad.** Para más información consulta la página web en [10X Genomics](https://cf.10xgenomics.com/samples/cell-exp/2.0.1/pbmc4k/pbmc4k_web_summary.html).
+
+
+- **Mediana de 1,235 genes por célula**
+- **Saturación de secuenciación muy alta (90.5%):** Esto indica que la librería está bien representada y que el análisis downstream puede hacerse con confianza
+- Cell Ranger v2.0.1
+]
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/CellRanger_reporte.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [dataset pbmc4k de 10X Genomics](https://cf.10xgenomics.com/samples/cell-exp/2.0.1/pbmc4k/pbmc4k_web_summary.html)
+]
+
+---
+
+## Sample panel
+
+.pull-left[
+En el panel de información de la muestra dentro del reporte de cellranger count (por ejemplo en el archivo web_summary.html), lo primero que se revisa son los metadatos básicos del análisis. Estos incluyen:
+
+- *🆔 Sample ID* → el nombre de la muestra asignado mediante el flag --id al correr cellranger count.
+- *Chemistry* → la química de 10x Genomics utilizada (ej. Single Cell 3’, Single Cell 5’, Multiome, etc.).
+- *📚 Reference Path y Transcriptome* → ruta y referencia genómica/transcriptómica empleada para mapear las lecturas.
+- *🔢 Pipeline Version* → versión de Cell Ranger usada para el análisis, importante para reproducibilidad y compatibilidad.
+]
+
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/samplePanel.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#41)
+]
+
+
+---
+
+## Sequencing panel
+
+.pull-left[
+- *📚 Number of reads* → número total de lecturas pareadas en la librería.
+- *🧩 Valid barcodes* → cantidad de barcodes que coinciden con la lista blanca conocida del kit (aprox. 1 millón posibles).
+- *🔢 Valid UMIs* → número de UMIs válidos (no compuestos por una sola base repetida y sin bases desconocidas).
+- *📈 Sequencing saturation* → proporción de UMIs únicos válidos frente al total de UMIs válidos; mide qué tan exhaustivo fue el muestreo.
+- *🎯 Q30 scores* → evaluación de la calidad de secuenciación para cada tipo de lectura: barcodes, UMIs, índices y lecturas de RNA.
+]
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("figures/sequencingPanel.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#42)
+]
+
+---
+
+## Sequencing panel
+
+En el panel de métricas clave de Cell Ranger, se destacan dos indicadores muy importantes para evaluar la calidad de la secuenciación y la complejidad de la librería:
+
+- 🎯 **Q30 Bases en lecturas de RNA**
+  + Umbral mínimo: > 65% (lo esperado es > 80%).
+  + Refleja la **calidad de la secuenciación.**
+  + Si el valor es bajo, conviene revisar con el proveedor de secuenciación para descartar problemas técnicos.
+  
+- 📈 **Sequencing saturation**
+  + Umbral mínimo: > 40% (aunque típicamente se observa entre 20% y 80%).
+  + Indica la **complejidad de la librería** y qué tan exhaustivo fue el muestreo de UMIs únicos.
+  + Si es demasiado bajo, puede sugerir que la librería no fue suficientemente diversa; en algunos casos se considera reconstruir la librería, aunque no siempre es obligatorio. 
+
+---
+
+## Mapping panel
+
+.pull-left[
+- **🧬 Reads mapped to genome** → número total de lecturas que se alinean al genoma de referencia.
+- **🎯 Reads mapped confidently to genome** → lecturas que se alinean de manera única y específica al genoma (sin ambigüedad).
+- **📑 Reads mapped confidently to exonic/intronic** → lecturas que se alinean de forma única a regiones *exónicas* (codificantes) o *intrónicas* (no codificantes).
+- **🔎 Reads mapped confidently to transcriptome** → lecturas que se asignan de manera única a un gen específico y son consistentes con las uniones de exones (splice junctions).
+]
+
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("figures/sequencingPanel.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#41)
+]
+
+---
+
+## Mapping panel
+
+- **🧬 Mapped to Genome > 60%**
+  + Lo usual es un rango de 50% ~ 90%.
+  + Refleja la tasa de mapeo de lecturas al genoma de referencia.
+  + Si el valor es demasiado bajo, conviene revisar la versión del genoma de referencia usada (puede haber incompatibilidad o falta de anotaciones).
+
+- **🎯 Reads Mapped Confidently to Transcriptome > 30%**
+  + Lo esperado es > 60% en la mayoría de los experimentos.
+  + Indica qué proporción de lecturas se asignan de manera única a genes, respetando las uniones de exones.
+  + Si el valor es bajo, puede reflejar problemas con la anotación del transcriptoma (ej. referencia incompleta o desactualizada).
+  
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#45)
+]
+
+---
+
+## Cell panel
+
+.pull-left[
+- **🧮 Estimated number of cells** → número total de barcodes asociados con al menos una célula (estimación del total de células capturadas).
+- **📊 Fraction reads in cells** → fracción de lecturas provenientes de barcodes válidos que están asociadas a una célula y mapeadas al transcriptoma.
+- **📈 Median reads per cell** → número mediano de lecturas del transcriptoma por cada célula (barcodes asociados).
+- **🧬 Median genes per cell** → número mediano de genes detectados (con al menos un conteo) por célula.
+]
+
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("figures/CellPanel.png")
+```
+]
+
+.footnote-right[Imagen tomada de: [Single-cell RNA sequencing ~ Session 1](https://rockefelleruniversity.github.io/scRNA-seq/presentations/slides/Session1.html#46)
+]
+
+---
+
+## Cell panel
+
+- **📊 Fraction Reads in Cells > 70% (usualmente > 85%)**
+  + Refleja el nivel de contaminación por **RNA ambiental.**
+  + Si es menor a 90%, se recomienda considerar correcciones por RNA ambiental (ej. algoritmos como SoupX).
+
+- **📈 Median reads per cell > 20,000/célula y Estimated number of cells entre 500 ~ 10,000**
+  + Valores fuera de este rango pueden indicar problemas en la **identificación de células.**
+  + Si los valores no son normales, conviene revisar el knee plot (gráfico de rodilla) y re-evaluar el número de células detectadas.
+  
+---
+
+## knee plot / Gráfica en forma de "codo" (knee):
 
 .pull-left[
 En el Cell Filtering clásico (Cell Ranger 2.2) se genera una curva que muestra:
@@ -614,34 +966,9 @@ knitr::include_graphics("figures/emptyDrops_Fig2.png")
 
 ---
 
-## Ejemplo: Reporte de Cell Ranger 
+## Clustering y expresión diferencial
 
 .pull-left[
-### Calidad de mapeo y secuenciación
-El *dataset pbmc4k* proviene de **células mononucleares de sangre periférica (PBMCs) humanas**, con un total de **4,340 células con buena calidad.** Para más información consulta la página web en [10X Genomics](https://cf.10xgenomics.com/samples/cell-exp/2.0.1/pbmc4k/pbmc4k_web_summary.html).
-
-
-- **Mediana de 1,235 genes por célula**
-- **Saturación de secuenciación muy alta (90.5%):** Esto indica que la librería está bien representada y que el análisis downstream puede hacerse con confianza
-- Cell Ranger v2.0.1
-]
-
-.pull-right[
-
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("figures/CellRanger_reporte.png")
-```
-]
-
-.footnote-right[Imagen tomada de: [dataset pbmc4k de 10X Genomics](https://cf.10xgenomics.com/samples/cell-exp/2.0.1/pbmc4k/pbmc4k_web_summary.html)
-]
-
----
-
-## Ejemplo: Reporte de Cell Ranger 
-
-.pull-left[
-### Clustering y expresión diferencial
 El reporte incluye proyecciones t-SNE con agrupamientos automáticos (8 clusters principales).
 
 - Cada cluster tiene genes característicos con log2 fold-change (L2FC) significativo. Ejemplos:
