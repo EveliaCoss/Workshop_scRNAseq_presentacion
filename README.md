@@ -34,6 +34,9 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 
 - Fecha: 18/03/2026
 - Presentación: [Clase 2](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase2_Normalizacion.html#1)
+- Descarga el archivo: [Practica1.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica1.qmd)
+- Visualización del reporte final: [Practica1](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica
+/Practica1.html)
 
 ### Clase 3. Selección de genes altamente variables, Reducción de dimensiones y clustering
 
