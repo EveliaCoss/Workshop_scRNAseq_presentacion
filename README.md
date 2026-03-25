@@ -38,7 +38,7 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 ### Clase 3. Selección de genes altamente variables, Reducción de dimensiones y clustering
 
 - Fecha: 25/03/2026
-- Presentación: Clase 3
+- Presentación: [Clase 3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase3_features.html#1)
 
 ### Clase 4. Identificación de genes marcadores
 

@@ -834,8 +834,9 @@ pbmc <- FindClusters(pbmc, resolution = 1)
 
 ## Ejercicio: pacientes con COVID-19 vs sanos
 
-- Descarga el archivo: [Practica1.qmd]()
-- Visualización del reporte final: [Practica1]()
+- Descarga el archivo: [Practica1.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica1.qmd)
+- Visualización del reporte final: [Practica1](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica
+/Practica1.html)
 
 ---
 
