@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Evelia Coss">
+<meta name="dcterms.date" content="2026-03-24">
+
+<title>Práctica 1: COVID-19 vs healhty</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Practica1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Practica1_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="Practica1_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Practica1_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="Practica1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Practica1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Practica1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Practica1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Practica1_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Practica1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Practica1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Practica1_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Práctica 1: COVID-19 vs healhty</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Evelia Coss </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 24, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="descripción-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="descripción-de-los-datos">Descripción de los datos</h2>
+<section id="información-general" class="level3">
+<h3 class="anchored" data-anchor-id="información-general">Información general</h3>
+<ul>
+<li><strong>Título del estudio:</strong> Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19</li>
+<li><strong>Especie:</strong> <em>Homo sapiens</em></li>
+<li><strong>Número de acceso de la base de datos GEO (Gene Expression Omnibus):</strong></li>
+<li><strong>Tipo de experimento:</strong> scRNA-seq</li>
+</ul>
+<p><strong>Antecedentes:</strong></p>
+<p>Aunque la mayoría de los individuos infectados con SARS-CoV-2 presentan COVID-19 leve, algunos pacientes desarrollan COVID-19 grave, acompañado de síndrome de dificultad respiratoria aguda e inflamación sistémica. Para identificar los factores que impulsan la progresión severa de la enfermedad, realizamos secuenciación de RNA de célula única (single-cell RNA-seq) utilizando células mononucleares de sangre periférica (PBMCs) obtenidas de donadores sanos, pacientes con COVID-19 leve o grave, y pacientes con influenza grave.</p>
+<p><strong>Resultados del artículo:</strong></p>
+<p>Los pacientes con COVID-19 mostraron firmas hiper-inflamatorias en todos los tipos celulares de las PBMCs, particularmente una regulación al alza de la respuesta inflamatoria mediada por <em>TNF/IL-1β</em> en comparación con la influenza grave. En los monocitos clásicos de pacientes con COVID-19 grave, la respuesta de interferón tipo I coexistió con la inflamación impulsada por <em>TNF/IL-1β</em>, lo cual no se observó en pacientes con infección leve. Con base en esto, proponemos que la respuesta de interferón tipo I exacerba la inflamación en pacientes con infección grave por COVID-19.</p>
+<p><strong>Artículo relacionado:</strong> Lee JS, Park S, Jeong HW, Ahn JY <em>et al.</em> Immunophenotyping of COVID-19 and influenza highlights the role of type I interferons in development of severe COVID-19. <em>Sci Immunol</em> 2020 Jul 10;5(49). PMID:&nbsp;<a href="https://www.ncbi.nlm.nih.gov/pubmed/32651212" title="Link to PubMed record">32651212</a></p>
+</section>
+<section id="diseño-experimental" class="level3">
+<h3 class="anchored" data-anchor-id="diseño-experimental">Diseño experimental</h3>
+<p>Este estudio se realizó con <strong>secuenciación de RNA de célula única (scRNA-seq)</strong> en <strong>células mononucleares de sangre periférica (PBMCs)</strong> de tres grupos:</p>
+<ul>
+<li><strong>5 pacientes con influenza grave</strong></li>
+<li><strong>11 pacientes con COVID-19</strong> (con distintos grados de severidad)</li>
+<li><strong>4 controles sanos</strong></li>
+</ul>
+<p>Este diseño permitió comparar directamente las respuestas inmunitarias entre influenza y COVID-19, así como distinguir qué características estaban asociadas con la progresión hacia formas graves de COVID-19.</p>
+</section>
+</section>
+<section id="paso-1.-cargar-paquetes-y-datasets-en-r" class="level2">
+<h2 class="anchored" data-anchor-id="paso-1.-cargar-paquetes-y-datasets-en-r">Paso 1. Cargar paquetes y datasets en R</h2>
+<section id="cargar-paquetes" class="level3">
+<h3 class="anchored" data-anchor-id="cargar-paquetes">Cargar paquetes</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix) <span class="co"># install.packages("Matrix")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdf5r)  <span class="co"># install.packages("hdf5r")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)  <span class="co"># BiocManager::install("rhdf5")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DoubletFinder) <span class="co"># remotes::install_github('chris-mcginnis-ucsf/DoubletFinder', force = TRUE)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat) <span class="do">## paquete principal de este capítulo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descargar-los-datasets-desde-geo" class="level3">
+<h3 class="anchored" data-anchor-id="descargar-los-datasets-desde-geo">Descargar los datasets desde GEO</h3>
+<p>Archivos que estamos descargando del estudio <strong>GSE149689</strong>:</p>
+<ol type="1">
+<li><p><code>GSE149689_series_matrix.txt.gz</code></p>
+<ul>
+<li>Contiene la <strong>matriz de expresión génica resumida</strong>.</li>
+<li>Es un archivo tabular donde cada fila corresponde a un gen y cada columna a una muestra.</li>
+<li>Útil para análisis rápidos sin necesidad de reconstruir todo el objeto de secuenciación.</li>
+</ul></li>
+<li><p><code>GSE149689_barcodes.tsv.gz</code></p>
+<ul>
+<li>Lista de <strong>códigos de barras celulares</strong>.</li>
+<li>Cada código identifica una célula individual en el experimento de scRNA-seq.</li>
+<li>Permite distinguir las lecturas de cada célula.</li>
+</ul></li>
+<li><p><code>GSE149689_features.tsv.gz</code></p>
+<ul>
+<li>Contiene la lista de <strong>genes (features)</strong> analizados.</li>
+<li>Incluye identificadores como el nombre del gen y, a veces, anotaciones adicionales.</li>
+<li>Se usa para mapear las filas de la matriz de conteos.</li>
+</ul></li>
+<li><p><code>GSE149689_matrix.mtx.gz</code></p>
+<ul>
+<li>Es la <strong>matriz de conteos cruda</strong> en formato <em>Matrix Market</em>.</li>
+<li>Representa cuántas veces se detectó cada gen en cada célula.</li>
+<li>Este archivo, junto con <em>barcodes</em> y <em>features</em>, forma el conjunto completo para reconstruir el objeto de análisis en herramientas como <strong>Seurat</strong>.</li>
+</ul></li>
+</ol>
+<div id="fig-data" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689"><img src="images/clipboard-1556849944.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Información suplementaria encontrada en GEO para el <strong>GSE149689.</strong>
+</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689"><img src="images/DatosGEO.png" class="img-fluid figure-img"></a></p>
+<figcaption>Información suplementaria encontrada en GEO para el <strong>GSE149689.</strong></figcaption>
+</figure>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nombre de la carpeta</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dest_dir <span class="ot">&lt;-</span> <span class="st">"fullData"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Si la carpeta existe, eliminarla primero</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">dir.exists</span>(dest_dir)) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(dest_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Carpeta eliminada: "</span>, dest_dir)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear la carpeta nuevamente</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(dest_dir)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Carpeta creada: "</span>, dest_dir)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir carpeta destino</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(dest_dir)) <span class="fu">dir.create</span>(dest_dir)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Aumentar el tiempo de espera a 10 minutos (600 segundos)</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de URLs a descargar</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE149nnn/GSE149689/matrix/GSE149689_series_matrix.txt.gz"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE149nnn/GSE149689/suppl/GSE149689_barcodes.tsv.gz"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE149nnn/GSE149689/suppl/GSE149689_features.tsv.gz"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE149nnn/GSE149689/suppl/GSE149689_matrix.mtx.gz"</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Descargar cada archivo</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (url <span class="cf">in</span> urls) {</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  dest_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dest_dir, <span class="fu">basename</span>(url))</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(dest_file)) {</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Descargando: "</span>, <span class="fu">basename</span>(url))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">download.file</span>(url, <span class="at">destfile =</span> dest_file, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Ya existe: "</span>, <span class="fu">basename</span>(url))</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="importar-matriz-de-conteos-en-r" class="level3">
+<h3 class="anchored" data-anchor-id="importar-matriz-de-conteos-en-r">Importar matriz de conteos en R</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer la matriz de conteos</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sm <span class="ot">&lt;-</span> <span class="fu">as</span>(Matrix<span class="sc">::</span><span class="fu">readMM</span>(<span class="st">"fullData/GSE149689_matrix.mtx.gz"</span>),<span class="at">Class =</span> <span class="st">"dgCMatrix"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>'as(&lt;dgTMatrix&gt;, "dgCMatrix")' is deprecated.
+Use 'as(., "CsparseMatrix")' instead.
+See help("Deprecated") and help("Matrix-deprecated").</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer nombres de genes y células</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">read.delim</span>(<span class="st">"fullData/GSE149689_features.tsv.gz"</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)[,<span class="dv">2</span>])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cells <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">read.delim</span>(<span class="st">"fullData/GSE149689_barcodes.tsv.gz"</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)[,<span class="dv">1</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Asignar nombres</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(sm) <span class="ot">&lt;-</span> genes</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(sm) <span class="ot">&lt;-</span> cells</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># agregar en el slot</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>sm<span class="sc">@</span>Dimnames <span class="ot">&lt;-</span> <span class="fu">list</span>(genes, cells)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="importar-la-metadata-en-r" class="level3">
+<h3 class="anchored" data-anchor-id="importar-la-metadata-en-r">Importar la metadata en R</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer metadatos de la serie</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">"fullData/GSE149689_series_matrix.txt.gz"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">skip =</span> <span class="dv">55</span>, <span class="co"># saltar las líneas iniciales de cabecera.</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="co"># Que la celda tenga ese nombre en la columna</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> <span class="cn">TRUE</span>) <span class="co"># rellena filas cortas con NA para que todas tengan el mismo número de columnas.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(meta[<span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">12</span>),])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                     7                        
+X.Sample_title                       "!Sample_source_name_ch1"
+Sample.1_nCoV.1.scRNA.seq..SW103.    "nCoV_PBMC"              
+Sample.2_nCoV.2.scRNA.seq..SW104.    "nCoV_PBMC"              
+Sample.3_Flu.1.scRNA.seq..SW105.     "Flu_PBMC"               
+Sample.4_Flu.2.scRNA.seq..SW106.     "Flu_PBMC"               
+Sample.5_Normal.1.scRNA.seq..SW107.  "Normal_PBMC"            
+Sample.6_Flu.3.scRNA.seq..SW108.     "Flu_PBMC"               
+Sample.7_Flu.4.scRNA.seq..SW109.     "Flu_PBMC"               
+Sample.8_Flu.5.scRNA.seq..SW110.     "Flu_PBMC"               
+Sample.9_nCoV.3.scRNA.seq..SW111.    "nCoV_PBMC"              
+Sample.10_nCoV.4.scRNA.seq..SW112.   "nCoV_PBMC"              
+Sample.11_nCoV.5.scRNA.seq..SW113.   "nCoV_PBMC"              
+Sample.12_nCoV.6.scRNA.seq..SW114.   "nCoV_PBMC"              
+Sample.13_Normal.2.scRNA.seq..SW115. "Normal_PBMC"            
+Sample.14_Normal.3.scRNA.seq..SW116. "Normal_PBMC"            
+Sample.15_nCoV.7.scRNA.seq..SW117.   "nCoV_PBMC"              
+Sample.16_nCoV.8.scRNA.seq..SW118.   "nCoV_PBMC"              
+Sample.17_nCoV.9.scRNA.seq..SW119.   "nCoV_PBMC"              
+Sample.18_nCoV.10.scRNA.seq..SW120.  "nCoV_PBMC"              
+Sample.19_Normal.4.scRNA.seq..SW121. "Normal_PBMC"            
+Sample.20_nCoV.11.scRNA.seq..SW122.  "nCoV_PBMC"              
+                                     8                     
+X.Sample_title                       "!Sample_organism_ch1"
+Sample.1_nCoV.1.scRNA.seq..SW103.    "Homo sapiens"        
+Sample.2_nCoV.2.scRNA.seq..SW104.    "Homo sapiens"        
+Sample.3_Flu.1.scRNA.seq..SW105.     "Homo sapiens"        
+Sample.4_Flu.2.scRNA.seq..SW106.     "Homo sapiens"        
+Sample.5_Normal.1.scRNA.seq..SW107.  "Homo sapiens"        
+Sample.6_Flu.3.scRNA.seq..SW108.     "Homo sapiens"        
+Sample.7_Flu.4.scRNA.seq..SW109.     "Homo sapiens"        
+Sample.8_Flu.5.scRNA.seq..SW110.     "Homo sapiens"        
+Sample.9_nCoV.3.scRNA.seq..SW111.    "Homo sapiens"        
+Sample.10_nCoV.4.scRNA.seq..SW112.   "Homo sapiens"        
+Sample.11_nCoV.5.scRNA.seq..SW113.   "Homo sapiens"        
+Sample.12_nCoV.6.scRNA.seq..SW114.   "Homo sapiens"        
+Sample.13_Normal.2.scRNA.seq..SW115. "Homo sapiens"        
+Sample.14_Normal.3.scRNA.seq..SW116. "Homo sapiens"        
+Sample.15_nCoV.7.scRNA.seq..SW117.   "Homo sapiens"        
+Sample.16_nCoV.8.scRNA.seq..SW118.   "Homo sapiens"        
+Sample.17_nCoV.9.scRNA.seq..SW119.   "Homo sapiens"        
+Sample.18_nCoV.10.scRNA.seq..SW120.  "Homo sapiens"        
+Sample.19_Normal.4.scRNA.seq..SW121. "Homo sapiens"        
+Sample.20_nCoV.11.scRNA.seq..SW122.  "Homo sapiens"        
+                                     9                                 
+X.Sample_title                       "!Sample_characteristics_ch1"     
+Sample.1_nCoV.1.scRNA.seq..SW103.    "subject group: COVID-19 patient" 
+Sample.2_nCoV.2.scRNA.seq..SW104.    "subject group: COVID-19 patient" 
+Sample.3_Flu.1.scRNA.seq..SW105.     "subject group: Influenza patient"
+Sample.4_Flu.2.scRNA.seq..SW106.     "subject group: Influenza patient"
+Sample.5_Normal.1.scRNA.seq..SW107.  "subject group: healthy control"  
+Sample.6_Flu.3.scRNA.seq..SW108.     "subject group: Influenza patient"
+Sample.7_Flu.4.scRNA.seq..SW109.     "subject group: Influenza patient"
+Sample.8_Flu.5.scRNA.seq..SW110.     "subject group: Influenza patient"
+Sample.9_nCoV.3.scRNA.seq..SW111.    "subject group: COVID-19 patient" 
+Sample.10_nCoV.4.scRNA.seq..SW112.   "subject group: COVID-19 patient" 
+Sample.11_nCoV.5.scRNA.seq..SW113.   "subject group: COVID-19 patient" 
+Sample.12_nCoV.6.scRNA.seq..SW114.   "subject group: COVID-19 patient" 
+Sample.13_Normal.2.scRNA.seq..SW115. "subject group: healthy control"  
+Sample.14_Normal.3.scRNA.seq..SW116. "subject group: healthy control"  
+Sample.15_nCoV.7.scRNA.seq..SW117.   "subject group: COVID-19 patient" 
+Sample.16_nCoV.8.scRNA.seq..SW118.   "subject group: COVID-19 patient" 
+Sample.17_nCoV.9.scRNA.seq..SW119.   "subject group: COVID-19 patient" 
+Sample.18_nCoV.10.scRNA.seq..SW120.  "subject group: COVID-19 patient" 
+Sample.19_Normal.4.scRNA.seq..SW121. "subject group: healthy control"  
+Sample.20_nCoV.11.scRNA.seq..SW122.  "subject group: COVID-19 patient" 
+                                     10                                                     
+X.Sample_title                       "!Sample_characteristics_ch1"                          
+Sample.1_nCoV.1.scRNA.seq..SW103.    "subject status: severe COVID-19 patient"              
+Sample.2_nCoV.2.scRNA.seq..SW104.    "subject status: mild COVID-19 patient"                
+Sample.3_Flu.1.scRNA.seq..SW105.     "age: 68"                                              
+Sample.4_Flu.2.scRNA.seq..SW106.     "age: 75"                                              
+Sample.5_Normal.1.scRNA.seq..SW107.  "age: 63"                                              
+Sample.6_Flu.3.scRNA.seq..SW108.     "age: 70"                                              
+Sample.7_Flu.4.scRNA.seq..SW109.     "age: 56"                                              
+Sample.8_Flu.5.scRNA.seq..SW110.     "age: 78"                                              
+Sample.9_nCoV.3.scRNA.seq..SW111.    "subject status: severe COVID-19 patient"              
+Sample.10_nCoV.4.scRNA.seq..SW112.   "subject status: severe COVID-19 patient"              
+Sample.11_nCoV.5.scRNA.seq..SW113.   "subject status: mild COVID-19 patient"                
+Sample.12_nCoV.6.scRNA.seq..SW114.   "subject status: mild COVID-19 patient"                
+Sample.13_Normal.2.scRNA.seq..SW115. "age: 54"                                              
+Sample.14_Normal.3.scRNA.seq..SW116. "age: 67"                                              
+Sample.15_nCoV.7.scRNA.seq..SW117.   "subject status: severe COVID-19 patient"              
+Sample.16_nCoV.8.scRNA.seq..SW118.   "subject status: severe COVID-19 patient"              
+Sample.17_nCoV.9.scRNA.seq..SW119.   "subject status: severe COVID-19 patient"              
+Sample.18_nCoV.10.scRNA.seq..SW120.  "subject status: mild COVID-19 patient"                
+Sample.19_Normal.4.scRNA.seq..SW121. "age: 63"                                              
+Sample.20_nCoV.11.scRNA.seq..SW122.  "subject status: Asymptomatic case of COVID-19 patient"
+                                     11                           
+X.Sample_title                       "!Sample_characteristics_ch1"
+Sample.1_nCoV.1.scRNA.seq..SW103.    "age: 63"                    
+Sample.2_nCoV.2.scRNA.seq..SW104.    "age: 82"                    
+Sample.3_Flu.1.scRNA.seq..SW105.     "gender: M"                  
+Sample.4_Flu.2.scRNA.seq..SW106.     "gender: F"                  
+Sample.5_Normal.1.scRNA.seq..SW107.  "gender: F"                  
+Sample.6_Flu.3.scRNA.seq..SW108.     "gender: M"                  
+Sample.7_Flu.4.scRNA.seq..SW109.     "gender: F"                  
+Sample.8_Flu.5.scRNA.seq..SW110.     "gender: M"                  
+Sample.9_nCoV.3.scRNA.seq..SW111.    "age: 67"                    
+Sample.10_nCoV.4.scRNA.seq..SW112.   "age: 67"                    
+Sample.11_nCoV.5.scRNA.seq..SW113.   "age: 46"                    
+Sample.12_nCoV.6.scRNA.seq..SW114.   "age: 38"                    
+Sample.13_Normal.2.scRNA.seq..SW115. "gender: F"                  
+Sample.14_Normal.3.scRNA.seq..SW116. "gender: F"                  
+Sample.15_nCoV.7.scRNA.seq..SW117.   "age: 73"                    
+Sample.16_nCoV.8.scRNA.seq..SW118.   "age: 73"                    
+Sample.17_nCoV.9.scRNA.seq..SW119.   "age: 61"                    
+Sample.18_nCoV.10.scRNA.seq..SW120.  "age: 61"                    
+Sample.19_Normal.4.scRNA.seq..SW121. "gender: M"                  
+Sample.20_nCoV.11.scRNA.seq..SW122.  "age: 62"                    
+                                     12                           
+X.Sample_title                       "!Sample_characteristics_ch1"
+Sample.1_nCoV.1.scRNA.seq..SW103.    "gender: M"                  
+Sample.2_nCoV.2.scRNA.seq..SW104.    "gender: F"                  
+Sample.3_Flu.1.scRNA.seq..SW105.     "cell type: PBMC"            
+Sample.4_Flu.2.scRNA.seq..SW106.     "cell type: PBMC"            
+Sample.5_Normal.1.scRNA.seq..SW107.  "cell type: PBMC"            
+Sample.6_Flu.3.scRNA.seq..SW108.     "cell type: PBMC"            
+Sample.7_Flu.4.scRNA.seq..SW109.     "cell type: PBMC"            
+Sample.8_Flu.5.scRNA.seq..SW110.     "cell type: PBMC"            
+Sample.9_nCoV.3.scRNA.seq..SW111.    "gender: F"                  
+Sample.10_nCoV.4.scRNA.seq..SW112.   "gender: F"                  
+Sample.11_nCoV.5.scRNA.seq..SW113.   "gender: M"                  
+Sample.12_nCoV.6.scRNA.seq..SW114.   "gender: F"                  
+Sample.13_Normal.2.scRNA.seq..SW115. "cell type: PBMC"            
+Sample.14_Normal.3.scRNA.seq..SW116. "cell type: PBMC"            
+Sample.15_nCoV.7.scRNA.seq..SW117.   "gender: F"                  
+Sample.16_nCoV.8.scRNA.seq..SW118.   "gender: F"                  
+Sample.17_nCoV.9.scRNA.seq..SW119.   "gender: M"                  
+Sample.18_nCoV.10.scRNA.seq..SW120.  "gender: M"                  
+Sample.19_Normal.4.scRNA.seq..SW121. "cell type: PBMC"            
+Sample.20_nCoV.11.scRNA.seq..SW122.  "gender: F"                  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Contar células por muestra</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">sample =</span> <span class="fu">colnames</span>(sm)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Usa sub() para extraer el texto después del último guion (-) en cada nombre de muestra.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">suffix =</span> <span class="fu">sub</span>(<span class="st">".*-"</span>, <span class="st">""</span>, sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Cuenta cuántas veces aparece cada valor de suffix.</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(suffix) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="fu">colnames</span>(meta)[<span class="dv">2</span><span class="sc">:</span><span class="dv">21</span>], <span class="fu">t</span>(<span class="fu">unname</span>(meta[<span class="dv">10</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">21</span>])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   suffix    n                 colnames(meta)[2:21]
+1       1 6455    Sample.1_nCoV.1.scRNA.seq..SW103.
+2      10 1167    Sample.2_nCoV.2.scRNA.seq..SW104.
+3      11 6398     Sample.3_Flu.1.scRNA.seq..SW105.
+4      12 6283     Sample.4_Flu.2.scRNA.seq..SW106.
+5      13 6156  Sample.5_Normal.1.scRNA.seq..SW107.
+6      14 6574     Sample.6_Flu.3.scRNA.seq..SW108.
+7      15 2349     Sample.7_Flu.4.scRNA.seq..SW109.
+8      16 4371     Sample.8_Flu.5.scRNA.seq..SW110.
+9      17 1755    Sample.9_nCoV.3.scRNA.seq..SW111.
+10     18 3984   Sample.10_nCoV.4.scRNA.seq..SW112.
+11     19 5542   Sample.11_nCoV.5.scRNA.seq..SW113.
+12      2 7731   Sample.12_nCoV.6.scRNA.seq..SW114.
+13     20 4868 Sample.13_Normal.2.scRNA.seq..SW115.
+14      3 5851 Sample.14_Normal.3.scRNA.seq..SW116.
+15      4 1724   Sample.15_nCoV.7.scRNA.seq..SW117.
+16      5 6426   Sample.16_nCoV.8.scRNA.seq..SW118.
+17      6 3516   Sample.17_nCoV.9.scRNA.seq..SW119.
+18      7 1455  Sample.18_nCoV.10.scRNA.seq..SW120.
+19      8 2001 Sample.19_Normal.4.scRNA.seq..SW121.
+20      9  538  Sample.20_nCoV.11.scRNA.seq..SW122.
+                                                      10
+1                subject status: severe COVID-19 patient
+2                  subject status: mild COVID-19 patient
+3                                                age: 68
+4                                                age: 75
+5                                                age: 63
+6                                                age: 70
+7                                                age: 56
+8                                                age: 78
+9                subject status: severe COVID-19 patient
+10               subject status: severe COVID-19 patient
+11                 subject status: mild COVID-19 patient
+12                 subject status: mild COVID-19 patient
+13                                               age: 54
+14                                               age: 67
+15               subject status: severe COVID-19 patient
+16               subject status: severe COVID-19 patient
+17               subject status: severe COVID-19 patient
+18                 subject status: mild COVID-19 patient
+19                                               age: 63
+20 subject status: Asymptomatic case of COVID-19 patient</code></pre>
+</div>
+</div>
+<p>¿Cuántos genes se detectaron por célula en mi matriz de expresión y cuál es el rango de esos conteos?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conteo de genes por célula</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>nC <span class="ot">&lt;-</span> <span class="fu">colSums</span>(sm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co"># ignora NA</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(nC) <span class="co"># 0 152409</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]     15 152409</code></pre>
+</div>
+</div>
+<p>¿Cuántas células y genes tenemos detectados?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sm) <span class="co"># 33538 85144 (genes, celulas)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33538 85144</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="paso-2.-subset-de-las-muestras" class="level2">
+<h2 class="anchored" data-anchor-id="paso-2.-subset-de-las-muestras">Paso 2. Subset de las muestras</h2>
+<p>Muestras elegidas para ejercicios</p>
+<ul>
+<li>COVID-19: 1 (M), 15 (F), 16 (F), 17 (M)</li>
+<li>Normales: 5 (F), 13 (F), 14 (F), 19 (M)</li>
+</ul>
+<p>F= Femenino; M= Masculino</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataset original</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Severe cases:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1,9,10,15,16,17</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># M,F,M,F,F,M</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Healthy:</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 5,13,14,19</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># F,F,F,M</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Only 19 is male.</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección de muestras con severidad + sanos</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>samples_use <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>),<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">19</span>))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿cuántas células pertenecen en total a las muestras 1, 5, 13, 14, 15, 16, 17 y 19?</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">table</span>(<span class="fu">sub</span>(<span class="st">".*-"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(sm)))[<span class="fu">as.character</span>(samples_use)]) <span class="co"># 39628</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 39628</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección aleatoria de células de las muestras que definiste en samples_use.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sel <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(samples_use,<span class="cf">function</span>(x){</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">1</span>);x <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="at">size =</span> <span class="dv">1500</span>,<span class="fu">grep</span>(<span class="fu">paste0</span>(<span class="st">"-"</span>,x,<span class="st">"$"</span>),<span class="fu">colnames</span>(sm),<span class="at">value =</span> T) )</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># nueva matriz sm2 que contiene solo las células seleccionadas (1,500 por muestra).</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>sm2 <span class="ot">&lt;-</span> sm[,sel]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Cuenta cuántas células quedaron por muestra en sm2.</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">sub</span>(<span class="st">".*-"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(sm2)))[<span class="fu">as.character</span>(samples_use)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1   15   16   17    5   13   14   19 
+1500 1500 1500 1500 1500 1500 1500 1500 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1   15   16   17    5   13   14   19 </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1500 1500 1500 1500 1500 1500 1500 1500 </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sm2) <span class="co">#[1] 33538 12000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33538 12000</code></pre>
+</div>
+</div>
+<p>Si tenías 8 muestras en <code>samples_use</code> y tomaste 1,500 células de cada una, deberías obtener 33538 × 12000.</p>
+</section>
+<section id="paso-3.-guardar-en-formato-hdf5-de-10x" class="level2">
+<h2 class="anchored" data-anchor-id="paso-3.-guardar-en-formato-hdf5-de-10x">Paso 3. Guardar en formato HDF5 de 10x</h2>
+<p>Carga la tabla de anotaciones de genes (<code>features.tsv.gz</code>), que contiene ID, nombre y tipo de cada gen.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>feats <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">"fullData/GSE149689_features.tsv.gz"</span>,<span class="at">header =</span> F)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Iteración por muestras:</p>
+<ul>
+<li>Define nombres de archivo como nCoV_PBMC_1.h5, Normal_PBMC_5.h5, etc.</li>
+<li>Extrae las células correspondientes a cada muestra (sm3).</li>
+<li>dim(sm3) muestra dimensiones de esa submatriz.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nombre de la carpeta</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hd5_dir <span class="ot">&lt;-</span> <span class="st">"sub"</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Si la carpeta existe, eliminarla primero</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">dir.exists</span>(hd5_dir)) {</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(hd5_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Carpeta eliminada: "</span>, hd5_dir)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Carpeta eliminada: sub</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear la carpeta nuevamente</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(hd5_dir)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Carpeta creada: "</span>, hd5_dir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Carpeta creada: sub</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"nCoV_PBMC_"</span>,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>)), <span class="fu">paste0</span>(<span class="st">"Normal_PBMC_"</span>,<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">19</span>)) )) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="fu">paste0</span>(<span class="st">"PROCESSING SAMPLE:    "</span>,i) )</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  spn <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">".*_"</span>,<span class="st">""</span>,i)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  fn <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"sub/"</span>,i,<span class="st">".h5"</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  group <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="fu">paste0</span>(<span class="st">"-"</span>,spn,<span class="st">"$"</span>),<span class="fu">colnames</span>(sm2),<span class="at">value =</span> T)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  sm3 <span class="ot">&lt;-</span>  sm2[,group]</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dim</span>(sm3)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># file.remove(fn)</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Crear archivo HDF5</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5createFile</span>(fn)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5createGroup</span>(fn,<span class="st">"matrix"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Guardar datos de la matriz dispersa</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>Dimnames[[<span class="dv">2</span>]],fn,<span class="st">"matrix/barcodes"</span>) <span class="co"># nombres de las células.</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>x,fn,<span class="st">"matrix/data"</span>) <span class="co"># valores no nulos (conteos).</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>i,fn,<span class="st">"matrix/indices"</span>) <span class="co"># posiciones de fila.</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>p,fn,<span class="st">"matrix/indptr"</span>)  <span class="co"># punteros de columna.</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>Dim,fn,<span class="st">"matrix/shape"</span>) <span class="co"># dimensiones</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Guardar anotaciones de genes</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5createGroup</span>(fn,<span class="st">"matrix/features"</span>)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>Dimnames[[<span class="dv">1</span>]]</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>          ,fn,<span class="st">"matrix/features/name"</span>) <span class="co"># nombres de genes.</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(sm3<span class="sc">@</span>Dimnames[[<span class="dv">1</span>]]</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>          ,fn,<span class="st">"matrix/features/_all_tag_keys"</span>) <span class="co"># etiquetas (aquí repite los nombres).</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(feats[,<span class="dv">3</span>],</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>          fn,<span class="st">"matrix/features/feature_type"</span>) <span class="co"># tipo de cada gen (ej. “Gene Expression”).</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(feats[,<span class="dv">1</span>],</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>          fn,<span class="st">"matrix/features/id"</span>) <span class="co">#  IDs de genes.</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5write</span>(<span class="fu">rep</span>(<span class="st">"GRCh38"</span>,<span class="fu">nrow</span>(sm3))</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>          ,fn,<span class="st">"matrix/features/genome"</span>) <span class="co"># referencia del genoma (GRCh38).</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Validación</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(fn)</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  nd <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(fn) <span class="co"># lista el contenido del archivo</span></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">sum</span>(<span class="sc">!</span>nd <span class="sc">==</span> sm3))      <span class="co"># lo lee como si fuera un archivo 10X</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)             <span class="co"># compara que coincida con la matriz original</span></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    nCoV_PBMC_1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    nCoV_PBMC_15</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    nCoV_PBMC_16</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    nCoV_PBMC_17</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    Normal_PBMC_5</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    Normal_PBMC_13</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    Normal_PBMC_14</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>PROCESSING SAMPLE:    Normal_PBMC_19</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.
+You created a large dataset with compression and chunking.
+The chunk size is equal to the dataset dimensions.
+If you want to read subsets of the dataset, you should testsmaller chunk sizes to improve read times.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+</div>
+<p>Resumen de las muestras:</p>
+<ul>
+<li>La mayoría de las muestras corresponden a mujeres, mientras que únicamente las muestras 1, 17 y 19 pertenecen a hombres.</li>
+<li>La muestra 16 presenta una calidad demasiado baja, por lo que debe descartarse del análisis.</li>
+<li>Para los ejercicios se recomienda utilizar las muestras de COVID-19 número 1, 15 y 17, junto con las muestras normales número 13, 14 y 19.</li>
+<li>Con esta selección se obtiene un conjunto que incluye un hombre en las muestras normales (Muestra 19) y dos hombres en las muestras de COVID-19 (Muestra 1 y 17).</li>
+</ul>
+</section>
+<section id="paso-4.-cargar-datos-hdf5-de-10x" class="level2">
+<h2 class="anchored" data-anchor-id="paso-4.-cargar-datos-hdf5-de-10x">Paso 4. Cargar datos HDF5 de 10x</h2>
+<p>Eliminar variables previas y liberar memoria RAM</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar todas las variables</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Liberar memoria con gc()</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
+Ncells 3922181 209.5    7483314  399.7         NA   5364368  286.5
+Vcells 6951330  53.1  541513400 4131.5      24576 515246211 3931.1</code></pre>
+</div>
+</div>
+<p>Cargar datos HDF5 de 10x</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>path_covid <span class="ot">&lt;-</span> <span class="st">"sub"</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>cov<span class="fl">.15</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"ncov_pbmc_15.h5"</span>),</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>cov<span class="fl">.1</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"ncov_pbmc_1.h5"</span>),</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>cov<span class="fl">.16</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"ncov_pbmc_16.h5"</span>),</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>cov<span class="fl">.17</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"ncov_pbmc_17.h5"</span>),</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a>ctrl<span class="fl">.5</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"normal_pbmc_5.h5"</span>),</span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a>ctrl<span class="fl">.13</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"normal_pbmc_13.h5"</span>),</span>
+<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a>ctrl<span class="fl">.14</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"normal_pbmc_14.h5"</span>),</span>
+<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a>ctrl<span class="fl">.19</span> <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">Read10X_h5</span>(</span>
+<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(path_covid, <span class="st">"normal_pbmc_19.h5"</span>),</span>
+<span id="cb60-34"><a href="#cb60-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">use.names =</span> T</span>
+<span id="cb60-35"><a href="#cb60-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="paso-5.-crear-objetos-seurat-y-fusionar-objetos" class="level2">
+<h2 class="anchored" data-anchor-id="paso-5.-crear-objetos-seurat-y-fusionar-objetos">Paso 5. Crear objetos Seurat y fusionar objetos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear objetos Seurat a partir de las matrices de conteo</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>sdata.cov1 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(cov<span class="fl">.1</span>, <span class="at">project =</span> <span class="st">"covid_1"</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>sdata.cov15 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(cov<span class="fl">.15</span>, <span class="at">project =</span> <span class="st">"covid_15"</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>sdata.cov17 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(cov<span class="fl">.17</span>, <span class="at">project =</span> <span class="st">"covid_17"</span>)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>sdata.cov16 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(cov<span class="fl">.16</span>, <span class="at">project =</span> <span class="st">"covid_16"</span>)</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>sdata.ctrl5 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(ctrl<span class="fl">.5</span>, <span class="at">project =</span> <span class="st">"ctrl_5"</span>)</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>sdata.ctrl13 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(ctrl<span class="fl">.13</span>, <span class="at">project =</span> <span class="st">"ctrl_13"</span>)</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>sdata.ctrl14 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(ctrl<span class="fl">.14</span>, <span class="at">project =</span> <span class="st">"ctrl_14"</span>)</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>sdata.ctrl19 <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(ctrl<span class="fl">.19</span>, <span class="at">project =</span> <span class="st">"ctrl_19"</span>)</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadir metadatos indicando condición</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>sdata.cov1<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Covid"</span></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>sdata.cov15<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Covid"</span></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>sdata.cov16<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Covid"</span></span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a>sdata.cov17<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Covid"</span></span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>sdata.ctrl5<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Ctrl"</span></span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>sdata.ctrl13<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Ctrl"</span></span>
+<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a>sdata.ctrl14<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Ctrl"</span></span>
+<span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a>sdata.ctrl19<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="st">"Ctrl"</span></span>
+<span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Fusionar todos los objetos en uno solo</span></span>
+<span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a>alldata <span class="ot">&lt;-</span> <span class="fu">merge</span>(sdata.cov1, <span class="fu">c</span>(sdata.cov15, sdata.cov16, sdata.cov17, sdata.ctrl5, sdata.ctrl13, sdata.ctrl14, sdata.ctrl19), <span class="at">add.cell.ids =</span> <span class="fu">c</span>(<span class="st">"covid_1"</span>, <span class="st">"covid_15"</span>, <span class="st">"covid_16"</span>, <span class="st">"covid_17"</span>, <span class="st">"ctrl_5"</span>, <span class="st">"ctrl_13"</span>, <span class="st">"ctrl_14"</span>, <span class="st">"ctrl_19"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Eliminar variables que ya no usamos</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar variables intermedias</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(cov<span class="fl">.1</span>, cov<span class="fl">.15</span>, cov<span class="fl">.16</span>, cov<span class="fl">.17</span>, ctrl<span class="fl">.5</span>, ctrl<span class="fl">.13</span>, ctrl<span class="fl">.14</span>, ctrl<span class="fl">.19</span>, sdata.cov1, sdata.cov15, sdata.cov16, sdata.cov17, sdata.ctrl5, sdata.ctrl13, sdata.ctrl14, sdata.ctrl19)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Liberar memoria con gc()</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
+Ncells  3992175 213.3    7483314 399.7         NA   6486514  346.5
+Vcells 32790014 250.2  113563592 866.5      24576 515246211 3931.1</code></pre>
+</div>
+</div>
+<p>Visualización de la metadata:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(alldata<span class="sc">@</span>meta.data, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           orig.ident nCount_RNA nFeature_RNA  type
+covid_1_AGGGTCCCATGACCCG-1    covid_1       7698         2140 Covid
+covid_1_TACCCACAGCGGGTTA-1    covid_1      13416         3391 Covid
+covid_1_CCCAACTTCATATGGC-1    covid_1      16498         3654 Covid
+covid_1_TCAAGTGTCCGAACGC-1    covid_1       1425          608 Covid
+covid_1_ATTCCTAGTGACTGTT-1    covid_1       7535         1808 Covid
+covid_1_GTGTTCCGTGGGCTCT-1    covid_1       4378         1345 Covid
+covid_1_CCTAAGACAGATTAAG-1    covid_1       9025         2449 Covid
+covid_1_AATAGAGAGGGTTAGC-1    covid_1        937          392 Covid
+covid_1_GGGTCACTCACCTACC-1    covid_1        797          346 Covid
+covid_1_TCCTCTTGTACAGTCT-1    covid_1      10632         2692 Covid</code></pre>
+</div>
+</div>
+<p>Visualización de los counts del paciente 1 con COVID:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">GetAssayData</span>(alldata, <span class="at">assay =</span> <span class="st">"RNA"</span>, <span class="at">layer =</span> <span class="st">"counts.covid_1"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3 x 3 sparse Matrix of class "dgCMatrix"
+            covid_1_AGGGTCCCATGACCCG-1 covid_1_TACCCACAGCGGGTTA-1
+MIR1302-2HG                          .                          .
+FAM138A                              .                          .
+OR4F5                                .                          .
+            covid_1_CCCAACTTCATATGGC-1
+MIR1302-2HG                          .
+FAM138A                              .
+OR4F5                                .</code></pre>
+</div>
+</div>
+<p>Visualización de los counts del control 13:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">GetAssayData</span>(alldata, <span class="at">assay =</span> <span class="st">"RNA"</span>, <span class="at">layer =</span> <span class="st">"counts.ctrl_13"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3 x 3 sparse Matrix of class "dgCMatrix"
+            ctrl_13_AGGTCATAGGAGACCT-13 ctrl_13_TCAATTCGTTCGGGTC-13
+MIR1302-2HG                           .                           .
+FAM138A                               .                           .
+OR4F5                                 .                           .
+            ctrl_13_CCTACGTTCACTACGA-13
+MIR1302-2HG                           .
+FAM138A                               .
+OR4F5                                 .</code></pre>
+</div>
+</div>
+</section>
+<section id="paso-6.-calcular-la-calidad-qc" class="level2">
+<h2 class="anchored" data-anchor-id="paso-6.-calcular-la-calidad-qc">Paso 6. Calcular la calidad (QC)</h2>
+<ul>
+<li><p><strong>Genes mitocondriales (<code>^MT-</code>)</strong></p>
+<ul>
+<li>Calidad celular (apoptosis, estrés).</li>
+</ul></li>
+<li><p><strong>Genes ribosomales (</strong><code>^RP[SL]</code><strong>)</strong></p>
+<ul>
+<li>Altos porcentajes de genes ribosomales pueden reflejar células en estados de alta síntesis proteica o, en algunos casos, ruido técnico.</li>
+<li>Sirven para evaluar si ciertos clusters están dominados por ribosomas más que por señales biológicas relevantes.</li>
+</ul></li>
+<li><p><strong>Genes de hemoglobina (</strong><code>^HB</code><strong>)</strong></p>
+<ul>
+<li>Se expresan en células de origen eritroide o contaminaciones de glóbulos rojos.</li>
+<li>Un alto porcentaje puede indicar contaminación de eritrocitos en la preparación de PBMCs.</li>
+</ul></li>
+<li><p><strong>Marcadores de plaquetas (</strong><code>PECAM1|PF4</code><strong>)</strong></p>
+<ul>
+<li>Se usan para detectar contaminación por plaquetas o subpoblaciones plaquetarias.</li>
+<li>Ayudan a decidir si excluir esas células o interpretarlas como una población real.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes Mitocondriales</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>alldata <span class="ot">&lt;-</span> <span class="fu">PercentageFeatureSet</span>(alldata, <span class="st">"^MT-"</span>, <span class="at">col.name =</span> <span class="st">"percent_mito"</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes ribosomales (^RP[SL])</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>alldata <span class="ot">&lt;-</span> <span class="fu">PercentageFeatureSet</span>(alldata, <span class="st">"^RP[SL]"</span>, <span class="at">col.name =</span> <span class="st">"percent_ribo"</span>)</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes de hemoglobina (^HB)</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>alldata <span class="ot">&lt;-</span> <span class="fu">PercentageFeatureSet</span>(alldata, <span class="st">"^HB[^(P|E|S)]"</span>, <span class="at">col.name =</span> <span class="st">"percent_hb"</span>)</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Marcadores de plaquetas (PECAM1|PF4)</span></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>alldata <span class="ot">&lt;-</span> <span class="fu">PercentageFeatureSet</span>(alldata, <span class="st">"PECAM1|PF4"</span>, <span class="at">col.name =</span> <span class="st">"percent_plat"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Visualizar la información que acabamos de agregar:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(alldata[[]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           orig.ident nCount_RNA nFeature_RNA  type
+covid_1_AGGGTCCCATGACCCG-1    covid_1       7698         2140 Covid
+covid_1_TACCCACAGCGGGTTA-1    covid_1      13416         3391 Covid
+covid_1_CCCAACTTCATATGGC-1    covid_1      16498         3654 Covid
+covid_1_TCAAGTGTCCGAACGC-1    covid_1       1425          608 Covid
+covid_1_ATTCCTAGTGACTGTT-1    covid_1       7535         1808 Covid
+covid_1_GTGTTCCGTGGGCTCT-1    covid_1       4378         1345 Covid
+                           percent_mito percent_ribo  percent_hb percent_plat
+covid_1_AGGGTCCCATGACCCG-1     6.819953     33.30735 0.025980774   0.03897116
+covid_1_TACCCACAGCGGGTTA-1     7.096005     16.87537 0.022361360   0.06708408
+covid_1_CCCAACTTCATATGGC-1     7.594860     16.50503 0.006061341   0.15759486
+covid_1_TCAAGTGTCCGAACGC-1     9.894737     31.15789 0.070175439   0.21052632
+covid_1_ATTCCTAGTGACTGTT-1     6.237558     45.08295 0.053085601   0.06635700
+covid_1_GTGTTCCGTGGGCTCT-1     8.040201     36.27227 0.022841480   0.02284148</code></pre>
+</div>
+</div>
+<p>Visualización grafica</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>feats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"nFeature_RNA"</span>, <span class="st">"nCount_RNA"</span>, <span class="st">"percent_mito"</span>, <span class="st">"percent_ribo"</span>, <span class="st">"percent_hb"</span>, <span class="st">"percent_plat"</span>)</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(alldata, <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">split.by =</span> <span class="st">"type"</span>, <span class="at">features =</span> feats, <span class="at">pt.size =</span> <span class="fl">0.1</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Practica1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeatureScatter</span>(alldata, <span class="st">"nCount_RNA"</span>, <span class="st">"nFeature_RNA"</span>, <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">pt.size =</span> .<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Practica1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="paso-7.-filtrado-de-células-con-baja-calidad" class="level2">
+<h2 class="anchored" data-anchor-id="paso-7.-filtrado-de-células-con-baja-calidad">Paso 7. Filtrado de células con baja calidad</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>selected_c <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(alldata, <span class="at">expression =</span> nFeature_RNA <span class="sc">&gt;</span> <span class="dv">200</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>selected_f <span class="ot">&lt;-</span> <span class="fu">rownames</span>(alldata)[Matrix<span class="sc">::</span><span class="fu">rowSums</span>(alldata) <span class="sc">&gt;</span> <span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Layer 'data' is empty</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>data.filt <span class="ot">&lt;-</span> <span class="fu">subset</span>(alldata, <span class="at">features =</span> selected_f, <span class="at">cells =</span> selected_c)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data.filt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33538 10431</code></pre>
+</div>
+</div>
+<section id="referencias" class="level3">
+<h3 class="anchored" data-anchor-id="referencias"><strong>Referencias</strong></h3>
+<ul>
+<li><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689">Información del dataset de GEO GSE149689</a></li>
+<li><a href="https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html">Más explicación de este dataset GSE149689</a></li>
+<li><a href="https://raw.githubusercontent.com/NBISweden/workshop-scRNAseq/master/scripts/data_processing/subsample_covid_data.Rmd">Preprocesamiento de las muestras GSE149689 - Código original</a></li>
+<li><a href="https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_01_qc.html">Limpieza de QC</a></li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
