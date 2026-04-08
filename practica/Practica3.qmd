@@ -23,11 +23,11 @@ editor: visual
 ```{r paquetes, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(patchwork)
-library(GenomicRanges)
-library(IRanges)
-library(S4Vectors)
-library(Seurat) ## paquete principal de este capítulo
-library(Azimuth) # revisar https://github.com/satijalab/azimuth
+# BiocManager::install(c("SingleCellExperiment","SingleR","celldex"),ask=F)
+library(Seurat)
+library(SingleCellExperiment)
+library(SingleR)
+library(celldex)
 ```
 
 ### Cargar el dataset de pbmc3k
@@ -181,7 +181,7 @@ Cada gen se proyecta como un mapa de calor sobre las coordenadas del UMAP, mostr
 FeaturePlot(alldata_top5, features = c("MS4A1", "GNLY", "CD3E", "CD14", "FCER1A", "FCGR3A", "LYZ", "PPBP", "CD8A"))
 ```
 
-## **Paso 4. Asignar identidad celular a los clusters**
+## **Paso 4. Asignar identidad celular a los clusters (opcional con Azimuth, problemas de paquetes)**
 
 En este dataset, cada cluster se puede asociar fácilmente a un tipo celular porque los genes diferenciales coinciden con marcadores bien establecidos.
 
@@ -191,7 +191,13 @@ En `Azimuth`, las columnas `predicted.celltype.l1`**,** `predicted.celltype.l2` 
 -   `predicted.celltype.l2` → nivel intermedio, con subtipos más específicos (ej. “Naive CD4 T”, “Memory CD4 T”, “CD14+ Monocyte”).
 -   `predicted.celltype.l3` → nivel más fino, con anotaciones aún más detalladas según la referencia usada (ej. “Naive CD4 T (CCR7+)”, “Effector CD8 T”, “Plasmacytoid DC”).
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
+library(Azimuth)
+library(SeuratWrappers)
+library(SeuratData)
+library(GenomicRanges)
+library(IRanges)
+library(S4Vectors)
 # Anotación automática usando referencia PBMC
 pbmc_annotated <- RunAzimuth(
   query = pbmc_integrated,
@@ -205,6 +211,9 @@ head(pbmc_annotated@meta.data)
 Visualizaciones
 
 ```{r}
+# Cargar el objeto desde el archivo RDS
+pbmc_annotated <- readRDS("output/pbmc3k_annotated.rds")
+
 # Graficar UMAP con anotaciones automáticas
 wrap_plots(
   DimPlot(pbmc_annotated, group.by = "predicted.celltype.l1"),
@@ -213,6 +222,55 @@ wrap_plots(
     ncol = 3
 ) + plot_layout(guides = "collect")
 ```
+
+## **Paso 4. Asignar identidad celular a los clusters (**`SingleR` **+** `celldex`**)**
+
+```{r, warning=FALSE, message=FALSE}
+# convertir de objeto seurat a SingleCellExperiment
+sce <- as.SingleCellExperiment(pbmc_integrated)
+sce
+```
+
+Ahora utilizaremos un paquete llamado `SingleR` para etiquetar cada célula. `SingleR` utiliza un conjunto de datos de referencia de tipos celulares con datos de expresión para deducir la mejor etiqueta para cada célula. El paquete `celldex` contiene una práctica recopilación de referencias de tipos celulares que, actualmente, incluye los siguientes conjuntos:
+
+```{r}
+ls('package:celldex')
+```
+
+En este ejemplo, utilizaremos el conjunto de datos «HumanPrimaryCellAtlasData», que contiene tipos de etiquetas tanto de alto nivel como de gran detalle. Descarguemos el conjunto de datos de referencia.
+
+```{r}
+# descargar referencia de human cell atlas
+ref.set <- celldex::HumanPrimaryCellAtlasData()
+```
+
+Observar las labels que tenemos
+
+```{r}
+unique(ref.set$label.main)
+```
+
+Un ejemplo de los tipos de etiquetas «finas».
+
+```{r}
+head(unique(ref.set$label.fine))
+```
+
+Ahora etiquetaremos nuestras células utilizando el objeto \`SingleCellExperiment\`, con la referencia establecida anteriormente.
+
+```{r}
+pred.cnts <- SingleR::SingleR(test = sce, ref = ref.set, labels = ref.set$label.main)
+```
+
+Conserva los tipos que tengan más de 10 celdas en la etiqueta, vuelve a asignar esas etiquetas a nuestro objeto Seurat y visualízalas en nuestro umap.
+
+```{r}
+lbls.keep <- table(pred.cnts$labels)>10
+pbmc_integrated$SingleR.labels <- ifelse(lbls.keep[pred.cnts$labels], pred.cnts$labels, 'Other')
+DimPlot(pbmc_integrated, reduction='umap', group.by='SingleR.labels')
+```
+
+Es bueno ver que, aunque SingleR no utiliza los clústeres que calculamos anteriormente, las etiquetas parecen coincidir bastante bien con esos clústeres.
 
 ## **Paso 5.** Marcadores conservados de tipos celulares
 
@@ -260,7 +318,7 @@ DotPlot(pbmc_annotated, features = top_conserved$gene, cols = c("blue", "red"), 
 
 ## Paso 7. Guardar dataset
 
-```{r}
+```{r, eval=FALSE}
 saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
 ```
 
@@ -271,3 +329,4 @@ saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
 -   [Dimensionality Reduction](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_02_dimred.html)
 -   [Data integration](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_03_integration.html)
 -   [Integrative analysis in Seurat v5](https://satijalab.org/seurat/articles/seurat5_integration)
+-   [SingleR + celldex + Seurat](https://swbioinf.github.io/scRNAseqInR_Doco/singler.html)

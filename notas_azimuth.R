@@ -1,0 +1,15 @@
+#library(GenomicRanges)
+# library(IRanges)
+# library(S4Vectors)
+# devtools::install_github("satijalab/seurat", "fix/v.5.3.1", force=TRUE)
+# setRepositories(ind = 1:3, addURLs = c('https://satijalab.r-universe.dev', 'https://bnprks.r-universe.dev/'))
+# install.packages(c("BPCells", "presto", "glmGamPoi"))
+library(Seurat) ## paquete principal de este capítulo
+# remotes::install_version(package = 'Signac', version = package_version('1.12.0'))
+# library(Signac) # remotes::install_github("stuart-lab/signac", ref = "v2")
+# library(SeuratData)
+#library(SeuratWrappers)
+# library(chromVAR)
+# remotes::install_github('satijalab/azimuth', ref = 'master')
+# library(Azimuth) # revisar https://github.com/satijalab/azimuth
+# BiocManager::install("SingleR")
