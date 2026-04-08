@@ -146,8 +146,8 @@ update.packages(oldPkgs = c("withr", "rlang"))
 if (!requireNamespace('remotes', quietly = TRUE)) {
   install.packages('remotes')
 }
-# instalar Azimuth
-remotes::install_github('satijalab/azimuth', ref = 'master')
+
+BiocManager::install(c("SingleCellExperiment","SingleR","celldex"),ask=F)
 
 # instalar paquetes extras necesarios para Azimuth
 BiocManager::install('multtest')
