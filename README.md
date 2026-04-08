@@ -49,6 +49,7 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 - Fecha: 08/04/2026
 - Presentación: [Clase 4](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase4_Biomarkers_Anotacion.html)
 - Descarga el archivo: [Practica3.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica3.qmd)
+- Visualización del reporte final: [Practica3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica3.html)
 
 ### Clase 5. Anotación de tipos celulares e Inferencia de trayectorias
 
