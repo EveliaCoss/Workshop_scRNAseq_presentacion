@@ -1,0 +1,225 @@
+---
+title: "Práctica 2: COVID-19 vs healhty"
+subtitle: "Reducción de dimensiones e integración de datos"
+author: "Evelia Coss"
+date: 04/7/2026
+format: html
+editor: visual
+---
+
+## Descripción de los datos
+
+### Información general
+
+-   **Título del estudio:** Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19
+-   **Especie:** *Homo sapiens*
+-   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):** [GSE149689](GSE149689)
+-   **Tipo de experimento:** scRNA-seq
+
+## Paso 1. Cargar paquetes y datasets en R
+
+### Cargar paquetes
+
+```{r paquetes, message=FALSE, warning=FALSE}
+library(Matrix) # install.packages("Matrix")
+library(hdf5r)  # install.packages("hdf5r")
+library(rhdf5)  # BiocManager::install("rhdf5")
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(Seurat) ## paquete principal de este capítulo
+```
+
+### Cargar el dataset de pbmc3k
+
+```{r}
+# Cargar el objeto desde el archivo RDS
+pbmc <- readRDS("output/pbmc3k_tutorial.rds")
+
+# Verificar qué contiene
+pbmc
+```
+
+## Paso 2. Visualización de la relación entre media y varianza de las muestras
+
+```{r, warning=FALSE, message=FALSE}
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", 
+                             nfeatures = 2000, verbose = F )
+
+# Obtener los 10 genes más variables
+top10 <- head(VariableFeatures(pbmc), 10)
+# Colocar la etiqueta de los genes
+plot1 <- VariableFeaturePlot(pbmc)
+# Colocar la etiqueta de los genes
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+# Combinar gráficos lado a lado y poner la leyenda arriba
+combined_plot <- plot1 + plot2 + plot_layout(guides = "collect") & theme(legend.position = "top")
+combined_plot
+```
+
+## Paso 3. Escalado de los datos y reducción de dimensiones incial (PCA)
+
+```{r}
+pbmc <- ScaleData(pbmc, features = VariableFeatures(pbmc))
+pbmc_pca <- RunPCA(pbmc, verbose = F, npcs = 20)
+```
+
+Verificar los nuevos campos agregados
+
+```{r}
+Reductions(pbmc_pca)
+```
+
+### Visualización del PCA
+
+```{r}
+DimPlot(pbmc_pca, reduction = "pca") + ggtitle("PCA con genes variables")
+```
+
+### Exploración inicial con `ElbowPlot()`
+
+```{r}
+ElbowPlot(pbmc_pca)
+```
+
+### ¿Qué PCs son estadísticamente significativos?
+
+```{r, warning=FALSE}
+pbmc_jack <- JackStraw(pbmc_pca, num.replicate = 100)
+# Asignar puntuaciones de significancia a las PCs
+pbmc_jack <- ScoreJackStraw(pbmc_jack, dims = 1:20)
+# Visualizar las PCs significativas
+JackStrawPlot(pbmc_jack, dims = 1:20)
+```
+
+### Genes que impulsan PC1- PC10
+
+```{r}
+VizDimLoadings(pbmc_pca, dims = 1:15, reduction = "pca")
+```
+
+### ¿Qué genes y células están impulsando cada PC?
+
+Ver un solo PCA:
+
+```{r}
+DimHeatmap(pbmc_pca, dims = 1, cells = 500, balanced = TRUE)
+```
+
+Observar los primeros 15 PCAs
+
+```{r}
+DimHeatmap(pbmc_pca, dims = 1:15, cells = 500, balanced = TRUE)
+```
+
+## Paso 4. Clustering de células
+
+-   El algoritmo de clustering en Seurat (basado en *Louvain* o *Leiden*) detecta comunidades en el grafo de vecinos.
+
+-   El parámetro `resolution` ajusta la sensibilidad:
+
+    -   **Valores bajos (ej. 0.2–0.5):** producen menos clusters, más grandes y generales.
+    -   **Valores altos (ej. 1–2):** producen más clusters, más pequeños y específicos.
+
+```{r}
+pbmc_pca <- FindNeighbors(pbmc_pca, dims = 1:15)
+pbmc_pca <- FindClusters(pbmc_pca, resolution = 0.5, cluster.name = "unintegrated_clusters")
+```
+
+## Paso 5. Reducciones no lineales (UMAP/t-SNE)
+
+```{r}
+# PCA
+pbmc_pca <- RunUMAP(pbmc_pca, dims = 1:15, verbose = F)
+# t-SNE
+pbmc_tsne <- RunTSNE(pbmc_pca, dims = 1:15, verbose = F)
+# UMAP
+pbmc_umap <- RunUMAP(pbmc_pca, dims = 1:15, verbose = F)
+wrap_plots(
+    DimPlot(pbmc_pca, reduction = "pca"),
+    DimPlot(pbmc_tsne, reduction = "tsne"),
+    DimPlot(pbmc_umap, reduction = "umap"),
+    ncol = 3
+) + plot_layout(guides = "collect")
+```
+
+Visualización de muestras y cluster detectados:
+
+```{r}
+# visualizacion grafica
+DimPlot(pbmc_umap, reduction = "umap", group.by =  c("type", "ident"))
+```
+
+## Paso 6. Integración de datasets
+
+Tras ejecutar `IntegrateData()`, el objeto Seurat contendrá un nuevo ensayo (Assay) con la matriz de expresión integrada (o corregida por *batch effect*). Ten en cuenta que los valores originales (sin corregir) siguen almacenados en el objeto, en el ensayo «RNA», por lo que puedes alternar entre ambos.
+
+```{r}
+# install.packages("harmony")
+suppressMessages(library(harmony))
+
+# Integración con Harmony
+pbmc_integrated <- IntegrateLayers(
+  object = pbmc_pca,
+  method = HarmonyIntegration,   # método de integración
+  orig.reduction = "pca",        # reducción original
+  new.reduction = "harmony",     # nombre de la nueva reducción
+  verbose = FALSE
+)
+```
+
+::: callout-note
+El mensaje que sale de:
+
+```         
+The `features` argument is ignored by `HarmonyIntegration`.
+This message is displayed once per session.
+```
+
+Solo es una advertencia: **HarmonyIntegration ignora el argumento** `features` porque siempre usa las PCs ya calculadas como entrada. Tu integración sí se ejecutó correctamente.
+:::
+
+A continuación, podemos utilizar esta nueva matriz integrada para el análisis y la visualización posteriores. Aquí escalamos los datos integrados, visualizamos los resultados con UMAP y TSNE. Los conjuntos de datos integrados se agrupan por tipo de célula, en lugar de por dataset.
+
+```{r}
+# Usar la reducción integrada para clustering y UMAP
+pbmc_integrated <- FindNeighbors(pbmc_integrated, reduction = "harmony", dims = 1:15)
+pbmc_integrated <- FindClusters(pbmc_integrated, resolution = 0.5)
+# t-sne
+pbmc_integrated_tsne <- RunTSNE(pbmc_integrated, reduction = "harmony", dims = 1:15)
+# umap
+pbmc_integrated_umap <- RunUMAP(pbmc_integrated, reduction = "harmony", dims = 1:15, verbose = F)
+
+# type es igual a condition
+# visualizacion grafica
+DimPlot(pbmc_integrated, reduction = "umap", group.by =  c("orig.ident", "type", "seurat_clusters"))
+```
+
+En este panel vamos a comparar cómo se ven los mismos datos usando tres métodos de reducción de dimensionalidad: PCA, t-SNE y UMAP. Primero mostramos los datos crudos (sin integración) y después los datos integrados con Harmony. La idea es que observen cómo cada técnica representa la estructura celular y cómo la integración corrige los efectos de lote.
+
+```{r}
+wrap_plots(
+  # Raw data
+  DimPlot(pbmc_pca, reduction = "pca", group.by = "orig.ident")+NoAxes()+ggtitle("PCA raw data"),
+  DimPlot(pbmc_tsne, reduction = "tsne", group.by = "orig.ident")+NoAxes()+ggtitle("tSNE raw data"),
+  DimPlot(pbmc_umap, reduction = "umap", group.by = "orig.ident")+NoAxes()+ggtitle("UMAP raw data"),
+  # Datos integrados despues de Harmony
+  DimPlot(pbmc_integrated, reduction = "pca", group.by = "orig.ident")+NoAxes()+ggtitle("PCA integrated"),
+  DimPlot(pbmc_integrated_tsne, reduction = "tsne", group.by = "orig.ident")+NoAxes()+ggtitle("tSNE integrated"),
+  DimPlot(pbmc_integrated_umap, reduction = "umap", group.by = "orig.ident")+NoAxes()+ggtitle("UMAP integrated"),
+  ncol = 3
+) + plot_layout(guides = "collect")
+```
+
+## Paso 7. Guardar dataset
+
+```{r}
+saveRDS(pbmc_integrated_umap, file = "output/pbmc3k_integrated.rds")
+```
+
+## **Referencias**
+
+-   [Información del dataset de GEO GSE149689](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
+-   [Más explicación de este dataset GSE149689](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html)
+-   [Dimensionality Reduction](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_02_dimred.html)
+-   [Data integration](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_03_integration.html)

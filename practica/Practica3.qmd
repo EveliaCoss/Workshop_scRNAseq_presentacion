@@ -1,0 +1,273 @@
+---
+title: "Práctica 3: COVID-19 vs healhty"
+subtitle: "Biomarcadores y anotación de los tipos celulares"
+author: "Evelia Coss"
+date: 04/7/2026
+format: html
+editor: visual
+---
+
+## Descripción de los datos
+
+### Información general
+
+-   **Título del estudio:** Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19
+-   **Especie:** *Homo sapiens*
+-   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):** [GSE149689](GSE149689)
+-   **Tipo de experimento:** scRNA-seq
+
+## Paso 1. Cargar paquetes y datasets en R
+
+### Cargar paquetes
+
+```{r paquetes, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(patchwork)
+library(GenomicRanges)
+library(IRanges)
+library(S4Vectors)
+library(Seurat) ## paquete principal de este capítulo
+library(Azimuth) # revisar https://github.com/satijalab/azimuth
+```
+
+### Cargar el dataset de pbmc3k
+
+```{r}
+# Cargar el objeto desde el archivo RDS
+pbmc_integrated <- readRDS("output/pbmc3k_integrated.rds")
+
+# Unir las capas del assay activo (ej. RNA)
+pbmc_integrated <- JoinLayers(pbmc_integrated)
+
+# Set the identity as louvain with resolution 0.5
+sel.clust <- "RNA_snn_res.0.5"
+# La identidad activa (active.ident) es la variable que Seurat usa por defecto para agrupar células en funciones como FindMarkers, DimPlot, etc.
+alldata <- SetIdent(pbmc_integrated, value = sel.clust)
+# Número de células en cada cluster 
+table(alldata@active.ident)
+```
+
+Número de células por dataset
+
+```{r}
+table(alldata$orig.ident)
+```
+
+## Paso 2. Identificación de genes marcadores
+
+Corre `FindAllMarkers` **para cada cluster en el objeto** y devuelve una tabla con los genes marcadores de todos los clusters.
+
+```{r}
+# Función: Identifica genes diferencialmente expresados entre dos grupos de células (ej. cluster 0 vs cluster 1, o cluster 0 vs todos los demás).
+markers_genes <- FindAllMarkers(
+    alldata,
+    log2FC.threshold = 0.2, #  umbral de cambio de expresión (default 0.25).
+    test.use = "wilcox", # método estadístico (ej. "wilcox", "MAST", "DESeq2").
+    min.pct = 0.1, # porcentaje mínimo de células que deben expresar el gen.
+    # Exige que la diferencia en la proporción de células que expresan un gen entre el grupo de interés y el grupo de referencia sea al menos del 20%.
+    min.diff.pct = 0.2,
+    only.pos = TRUE, # si TRUE, devuelve solo genes sobreexpresados.
+    max.cells.per.ident = 50, # Limita el número máximo de células usadas por cluster (ident) en el test de DE.
+    assay = "RNA"
+)
+
+markers_genes  %>%
+  # Agrupa la tabla de genes marcadores por el cluster al que pertenecen.
+    group_by(cluster) %>%
+  #  log2 fold change promedio sea mayor que 1.
+    dplyr::filter(avg_log2FC > 1) %>%
+  # Convertir en tabla
+  DT::datatable()
+```
+
+::: callout-note
+Puedes ejecutar el mismo código anterior con otra prueba: «wilcox» (prueba de suma de rangos de Wilcoxon), «bimod» (prueba de razón de verosimilitud), «roc» (identifica «marcadores» de expresión génica mediante el análisis ROC), «t» (prueba t de Student), «negbinom» (modelo lineal generalizado binomial negativo), «poisson» (modelo lineal generalizado de Poisson), «LR» (regresión logística), «MAST» (modelo de vallas), «DESeq2» (distribución binomial negativa).
+:::
+
+::: callout-important
+Podrías pobrar cambiando la manera en la que se hizo el analisis tomando en cuenta lo siguiente y con la función `FindMarkers`:
+
+-   Clústeres grandes (0–3, \>300 células): **Wilcoxon**.
+-   Clústeres medianos (4–7, 100–200 células): **MAST** o **Wilcoxon**.
+-   Clúster pequeño (8, 23 células): **MAST** o **ROC**, con interpretación cautelosa.
+
+🧩 **Interpretación:** Para clústeres grandes (0–3) los resultados serán confiables con Wilcoxon; para clústeres medianos (4–7) puedes considerar **MAST**; y para el clúster 8, los resultados deben verse más como hipótesis que como evidencia sólida.
+:::
+
+## Paso 3. Visualizaciones de genes marcadores
+
+Ahora podemos seleccionar los 25 genes más sobreexpresados para representarlos gráficamente.
+
+```{r}
+top25 <- markers_genes %>%
+    group_by(cluster) %>%
+    top_n(-25, p_val_adj) 
+
+# Divide la ventana gráfica en una cuadrícula de 2 filas × 5 columnas, para mostrar hasta 10 gráficos en la misma figura.
+par(mfrow = c(2, 5), mar = c(4, 6, 3, 1))
+# for para los clusters
+for (i in unique(top25$cluster)) {
+    barplot(sort(setNames(top25$avg_log2FC, top25$gene)[top25$cluster == i], F),
+        horiz = T, las = 1, main = paste0(i, " vs. rest"), border = "white", yaxs = "i"
+    )
+    abline(v = c(0, 0.25), lty = c(1, 2))
+}
+```
+
+### Heatmap
+
+```{r}
+top5 <- markers_genes %>%
+    group_by(cluster) %>%
+  # Selecciona las 5 filas con el valor más pequeño de p_val_adj dentro de cada grupo.
+    slice_min(p_val_adj, n = 5, with_ties = FALSE) 
+
+# crear una ranura «scale.data» para los genes seleccionados
+alldata_top5 <- ScaleData(alldata, features = as.character(unique(top5$gene)), assay = "RNA")
+
+# save
+# saveRDS(alldata_top5, file = "output/alldata_top5.rds")
+# saveRDS(top5, file = "output/top5.rds")
+
+# Visualizacion grafica
+DoHeatmap(alldata_top5, features = as.character(unique(top5$gene)), group.by = sel.clust, assay = "RNA")
+```
+
+### Dotplot
+
+Otra forma consiste en representar las tasas globales de expresión y detección del grupo en un gráfico de puntos.
+
+```{r}
+DotPlot(alldata_top5, features = rev(as.character(unique(top5$gene))), group.by = sel.clust, assay = "RNA") + coord_flip()
+```
+
+### Violin plot
+
+También podemos trazar un gráfico de violín para cada gen.
+
+```{r}
+top3 <- markers_genes %>%
+    group_by(cluster) %>%
+    slice_min(order_by = p_val_adj, n = 3, with_ties = FALSE)
+# saveRDS(top3, file = "output/top3.rds")
+
+# Establece pt.size en cero si no quieres que todos los puntos oculten las formas del violín, o en un valor pequeño, como 0,1
+VlnPlot(alldata_top5, features = as.character(unique(top3$gene)), ncol = 5, group.by = sel.clust, assay = "RNA", pt.size = 0)
+```
+
+Podemos visualizar genes característicos de las células Naive CD4+ T, como *IL7R* y *CCR7*, que se expresan de manera distintiva en este tipo de linfocitos. Estos genes funcionan como marcadores que nos ayudan a identificar y diferenciar esta población celular dentro del análisis de expresión.
+
+```{r}
+VlnPlot(alldata_top5, features = c("IL7R", "CCR7"))
+```
+
+### **Gradientes** en UMAP
+
+Cada gen se proyecta como un mapa de calor sobre las coordenadas del UMAP, mostrando en qué regiones (clusters) se expresa más o menos.
+
+#### 📌 Qué vemos al observar estos genes
+
+-   **MS4A1 (CD20)** → marcador de linfocitos B. Se verá concentrado en el cluster de células B.
+-   **GNLY (Granulysin)** → marcador de células NK y citotóxicas. Se verá en clusters de NK/T CD8+.
+-   **CD3E** → marcador pan-T. Se distribuye en clusters de células T (CD4 y CD8).
+-   **CD14** → marcador de monocitos clásicos. Se verá en el cluster monocítico.
+-   **FCER1A** → marcador de células dendríticas. Se verá en el cluster de DC.
+-   **FCGR3A (CD16)** → marcador de monocitos no clásicos y NK. Se verá en un cluster distinto de monocitos/NK.
+-   **LYZ (Lisozima)** → marcador de monocitos y granulocitos. Se verá en los clusters mieloides.
+-   **PPBP** → marcador de plaquetas. Se verá en el cluster plaquetario.
+-   **CD8A** → marcador de linfocitos T CD8+. Se verá en el cluster de T citotóxicas.
+
+```{r}
+FeaturePlot(alldata_top5, features = c("MS4A1", "GNLY", "CD3E", "CD14", "FCER1A", "FCGR3A", "LYZ", "PPBP", "CD8A"))
+```
+
+## **Paso 4. Asignar identidad celular a los clusters**
+
+En este dataset, cada cluster se puede asociar fácilmente a un tipo celular porque los genes diferenciales coinciden con marcadores bien establecidos.
+
+En `Azimuth`, las columnas `predicted.celltype.l1`**,** `predicted.celltype.l2` **y** `predicted.celltype.l3` representan distintos niveles de detalle en la anotación automática de tipos celulares:
+
+-   `predicted.celltype.l1` → nivel más general (ej. “T cell”, “B cell”, “Monocyte”).
+-   `predicted.celltype.l2` → nivel intermedio, con subtipos más específicos (ej. “Naive CD4 T”, “Memory CD4 T”, “CD14+ Monocyte”).
+-   `predicted.celltype.l3` → nivel más fino, con anotaciones aún más detalladas según la referencia usada (ej. “Naive CD4 T (CCR7+)”, “Effector CD8 T”, “Plasmacytoid DC”).
+
+```{r, warning=FALSE, message=FALSE}
+# Anotación automática usando referencia PBMC
+pbmc_annotated <- RunAzimuth(
+  query = pbmc_integrated,
+  reference = "pbmcref"
+)
+
+# Ver anotaciones asignadas
+head(pbmc_annotated@meta.data)
+```
+
+Visualizaciones
+
+```{r}
+# Graficar UMAP con anotaciones automáticas
+wrap_plots(
+  DimPlot(pbmc_annotated, group.by = "predicted.celltype.l1"),
+  DimPlot(pbmc_annotated, group.by = "predicted.celltype.l2"),
+  DimPlot(pbmc_annotated, group.by = "predicted.celltype.l3"),
+    ncol = 3
+) + plot_layout(guides = "collect")
+```
+
+## **Paso 5.** Marcadores conservados de tipos celulares
+
+Para identificar **marcadores conservados de tipos celulares** en Seurat, se usa la función `FindConservedMarkers()`. Esta función busca genes que estén diferencialmente expresados en un cluster específico **y que además sean consistentes entre condiciones o grupos** (por ejemplo, entre diferentes donantes, tratamientos o lotes).
+
+```{r}
+# Buscar marcadores conservados en el cluster 0
+conserved_markers <- FindConservedMarkers(
+  pbmc_annotated,
+  ident.1 = 0,              # cluster de interés
+  grouping.var = "type",  # variable que define los grupos (ej. donantes)
+  assay = "RNA"
+)
+
+head(conserved_markers)
+```
+
+### Seleccionar los más relevantes
+
+-   Para encontrar **marcadores conservados**, lo más lógico es ordenar por `max_pval`:
+    -   Si el máximo p‑valor sigue siendo bajo, significa que el gen es significativo en todos los grupos.
+-   `minimump_p_val` solo te dice el mejor grupo, pero no garantiza conservación.
+
+```{r}
+top_conserved <- conserved_markers %>%
+  rownames_to_column("gene") %>%
+  arrange(max_pval) %>% # ordenar de menor a mayor
+  slice_head(n = 20) # tomar los 10 más robustos
+
+head(top_conserved)
+```
+
+### Visualización
+
+```{r}
+DotPlot(pbmc_annotated, features = top_conserved$gene, cols = c("blue", "red"), dot.scale = 8, split.by = "type") +
+    RotatedAxis()
+```
+
+### Interpretación 🔎
+
+-   Si un gen aparece con puntos grandes y coloreados en ambos grupos (Control y Covid), significa que es un **marcador conservado**: se expresa de manera robusta en ese cluster sin importar la condición.
+
+-   Si el color o el tamaño cambia mucho entre Control y Covid, ese gen podría ser un **marcador diferencial** entre condiciones, no conservado.
+
+## Paso 7. Guardar dataset
+
+```{r}
+saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
+```
+
+## **Referencias**
+
+-   [Información del dataset de GEO GSE149689](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
+-   [Más explicación de este dataset GSE149689](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html)
+-   [Dimensionality Reduction](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_02_dimred.html)
+-   [Data integration](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_03_integration.html)
+-   [Integrative analysis in Seurat v5](https://satijalab.org/seurat/articles/seurat5_integration)

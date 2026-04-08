@@ -85,6 +85,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Práctica 1: COVID-19 vs healhty</h1>
+<p class="subtitle lead">Control de calidad y normalización de los datos</p>
 </div>
 
 
@@ -120,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><strong>Título del estudio:</strong> Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19</li>
 <li><strong>Especie:</strong> <em>Homo sapiens</em></li>
-<li><strong>Número de acceso de la base de datos GEO (Gene Expression Omnibus):</strong></li>
+<li><strong>Número de acceso de la base de datos GEO (Gene Expression Omnibus):</strong> <a href="GSE149689">GSE149689</a></li>
 <li><strong>Tipo de experimento:</strong> scRNA-seq</li>
 </ul>
 <p><strong>Antecedentes:</strong></p>
@@ -184,20 +185,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Este archivo, junto con <em>barcodes</em> y <em>features</em>, forma el conjunto completo para reconstruir el objeto de análisis en herramientas como <strong>Seurat</strong>.</li>
 </ul></li>
 </ol>
-<div id="fig-data" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689"><img src="images/clipboard-1556849944.png" class="img-fluid figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Información suplementaria encontrada en GEO para el <strong>GSE149689.</strong>
-</figcaption>
-</figure>
-</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689"><img src="images/DatosGEO.png" class="img-fluid figure-img"></a></p>
-<figcaption>Información suplementaria encontrada en GEO para el <strong>GSE149689.</strong></figcaption>
+<figcaption>Información suplementaria encontrada en GEO para el GSE149689.</figcaption>
 </figure>
 </div>
 <div class="cell">
@@ -243,7 +234,7 @@ Figure&nbsp;1: Información suplementaria encontrada en GEO para el <strong>GSE1
 <h3 class="anchored" data-anchor-id="importar-matriz-de-conteos-en-r">Importar matriz de conteos en R</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer la matriz de conteos</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sm <span class="ot">&lt;-</span> <span class="fu">as</span>(Matrix<span class="sc">::</span><span class="fu">readMM</span>(<span class="st">"fullData/GSE149689_matrix.mtx.gz"</span>),<span class="at">Class =</span> <span class="st">"dgCMatrix"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sm <span class="ot">&lt;-</span> <span class="fu">as</span>(Matrix<span class="sc">::</span><span class="fu">readMM</span>(<span class="st">"fullData/GSE149689_matrix.mtx.gz"</span>), <span class="at">Class =</span> <span class="st">"dgCMatrix"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>'as(&lt;dgTMatrix&gt;, "dgCMatrix")' is deprecated.
 Use 'as(., "CsparseMatrix")' instead.
@@ -502,7 +493,7 @@ Sample.20_nCoV.11.scRNA.seq..SW122.  "gender: F"                  </code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 39628</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección aleatoria de células de las muestras que definiste en samples_use.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección aleatoria de células de las muestras que definiste en samples_use</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sel <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(samples_use,<span class="cf">function</span>(x){</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">1</span>);x <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="at">size =</span> <span class="dv">1500</span>,<span class="fu">grep</span>(<span class="fu">paste0</span>(<span class="st">"-"</span>,x,<span class="st">"$"</span>),<span class="fu">colnames</span>(sm),<span class="at">value =</span> T) )</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}))</span>
@@ -750,8 +741,8 @@ If you want to read subsets of the dataset, you should testsmaller chunk sizes t
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 3922181 209.5    7483314  399.7         NA   5364368  286.5
-Vcells 6951330  53.1  541513400 4131.5      24576 515246211 3931.1</code></pre>
+Ncells 3922329 209.5    7481171  399.6         NA   5364661  286.6
+Vcells 6956014  53.1  541519228 4131.5      24576 515249723 3931.1</code></pre>
 </div>
 </div>
 <p>Cargar datos HDF5 de 10x</p>
@@ -828,8 +819,8 @@ Vcells 6951330  53.1  541513400 4131.5      24576 515246211 3931.1</code></pre>
 <span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells  3992175 213.3    7483314 399.7         NA   6486514  346.5
-Vcells 32790014 250.2  113563592 866.5      24576 515246211 3931.1</code></pre>
+Ncells  3992323 213.3    7481171 399.6         NA   6486663  346.5
+Vcells 32794708 250.3  113564815 866.5      24576 515249723 3931.1</code></pre>
 </div>
 </div>
 <p>Visualización de la metadata:</p>
@@ -946,7 +937,9 @@ covid_1_GTGTTCCGTGGGCTCT-1     8.040201     36.27227 0.022841480   0.02284148</c
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeatureScatter</span>(alldata, <span class="st">"nCount_RNA"</span>, <span class="st">"nFeature_RNA"</span>, <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">pt.size =</span> .<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">FeatureScatter</span>(alldata, <span class="at">feature1 =</span> <span class="st">"nCount_RNA"</span>, <span class="at">feature2 =</span> <span class="st">"percent_mito"</span>, <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">pt.size =</span> .<span class="dv">5</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">FeatureScatter</span>(alldata, <span class="at">feature1 =</span> <span class="st">"nCount_RNA"</span>, <span class="at">feature2 =</span> <span class="st">"nFeature_RNA"</span>, <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">pt.size =</span> .<span class="dv">5</span>)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> plot2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -955,30 +948,481 @@ covid_1_GTGTTCCGTGGGCTCT-1     8.040201     36.27227 0.022841480   0.02284148</c
 </div>
 </div>
 </div>
-</section>
-<section id="paso-7.-filtrado-de-células-con-baja-calidad" class="level2">
-<h2 class="anchored" data-anchor-id="paso-7.-filtrado-de-células-con-baja-calidad">Paso 7. Filtrado de células con baja calidad</h2>
+<p>Número de células ANTES del filtrado:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>selected_c <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(alldata, <span class="at">expression =</span> nFeature_RNA <span class="sc">&gt;</span> <span class="dv">200</span>)</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>selected_f <span class="ot">&lt;-</span> <span class="fu">rownames</span>(alldata)[Matrix<span class="sc">::</span><span class="fu">rowSums</span>(alldata) <span class="sc">&gt;</span> <span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Layer 'data' is empty</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>data.filt <span class="ot">&lt;-</span> <span class="fu">subset</span>(alldata, <span class="at">features =</span> selected_f, <span class="at">cells =</span> selected_c)</span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data.filt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(alldata<span class="sc">$</span>orig.ident)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 33538 10431</code></pre>
+<pre><code>
+ covid_1 covid_15 covid_16 covid_17  ctrl_13  ctrl_14  ctrl_19   ctrl_5 
+    1500     1500     1500     1500     1500     1500     1500     1500 </code></pre>
 </div>
 </div>
-<section id="referencias" class="level3">
-<h3 class="anchored" data-anchor-id="referencias"><strong>Referencias</strong></h3>
+</section>
+<section id="paso-7.-filtrado-de-células-con-baja-calidad-primer-filtro" class="level2">
+<h2 class="anchored" data-anchor-id="paso-7.-filtrado-de-células-con-baja-calidad-primer-filtro">Paso 7. Filtrado de células con baja calidad (primer filtro)</h2>
+<p>Estaremos filtrando las células con al menos 200 genes detectados, y los genes deben estar expresados en al menos tres células. Estos valores dependen del método de preparación de la biblioteca utilizado.</p>
+<ul>
+<li><p><strong>Genes mitocondriales:</strong> Una alta proporción de lecturas mitocondriales suele indicar células dañadas o en apoptosis. Por eso se filtran células con &lt; 10% de lecturas mitocondriales.</p></li>
+<li><p><strong>Genes ribosomales:</strong> Son muy abundantes y pueden dominar la señal, pero no aportan información biológica específica sobre el estado celular. Control de sesgo técnico, pero sin eliminar células normales con actividad ribosomal fisiológica.</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>data.filt <span class="ot">&lt;-</span> <span class="fu">subset</span>(alldata, <span class="at">subset =</span> nFeature_RNA <span class="sc">&gt;</span> <span class="dv">200</span> <span class="sc">&amp;</span> </span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>                      nFeature_RNA <span class="sc">&lt;</span> <span class="dv">2500</span> <span class="sc">&amp;</span> percent_mito <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">&amp;</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>                      percent_ribo <span class="sc">&lt;</span> <span class="dv">20</span>)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data.filt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33538  2548</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>data.filt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class Seurat 
+33538 features across 2548 samples within 1 assay 
+Active assay: RNA (33538 features, 0 variable features)
+ 8 layers present: counts.covid_1, counts.covid_15, counts.covid_16, counts.covid_17, counts.ctrl_5, counts.ctrl_13, counts.ctrl_14, counts.ctrl_19</code></pre>
+</div>
+</div>
+<p>Tenemos 33, 538 genes detectados en 2,548 células. Estas células se encuentran distribuidas en los siguientes datasets:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data.filt<span class="sc">$</span>orig.ident)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ covid_1 covid_15 covid_16 covid_17  ctrl_13  ctrl_14  ctrl_19   ctrl_5 
+     349      462      298      581      185      212      297      164 </code></pre>
+</div>
+</div>
+<ul>
+<li>¿Dónde se almacenan la métricas de QC en Seurat?</li>
+</ul>
+<p>Están almacenadas en la seccion de <code>@meta.data</code> del objeto Seurat.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opción A</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data.filt<span class="sc">@</span>meta.data, <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           orig.ident nCount_RNA nFeature_RNA  type
+covid_1_AATAGAGAGGGTTAGC-1    covid_1        937          392 Covid
+covid_1_GGGTCACTCACCTACC-1    covid_1        797          346 Covid
+covid_1_GGGTGAAGTTTACCTT-1    covid_1       1009          437 Covid
+covid_1_AATGGAACACATACTG-1    covid_1       1865          810 Covid
+covid_1_TGCAGATAGAATCCCT-1    covid_1        809          379 Covid
+                           percent_mito percent_ribo percent_hb percent_plat
+covid_1_AATAGAGAGGGTTAGC-1     6.723586     6.723586  0.5336179    3.5218783
+covid_1_GGGTCACTCACCTACC-1     4.265997     6.398996  0.1254705    2.0075282
+covid_1_GGGTGAAGTTTACCTT-1     7.036670     3.369673  0.4955401    0.6937562
+covid_1_AATGGAACACATACTG-1     1.608579    11.152815  0.0000000    0.0000000
+covid_1_TGCAGATAGAATCCCT-1     5.438813     2.719407  0.3708282    1.4833127</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opción B</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="co"># head(data.filt[[]], 5)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Si quieres ver qué capas tienes disponibles en tu objeto:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Layers</span>(data.filt, <span class="at">assay =</span> <span class="st">"RNA"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "counts.covid_1"  "counts.covid_15" "counts.covid_16" "counts.covid_17"
+[5] "counts.ctrl_5"   "counts.ctrl_13"  "counts.ctrl_14"  "counts.ctrl_19" </code></pre>
+</div>
+</div>
+<section id="cuántas-lecturas-totales-tiene-cada-gen-en-cada-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="cuántas-lecturas-totales-tiene-cada-gen-en-cada-dataset">¿Cuántas lecturas totales tiene cada gen en cada dataset?</h3>
+<p>Además, también podemos ver qué genes contribuyen en mayor medida a esas lecturas. Por ejemplo, podemos representar gráficamente el porcentaje de recuentos por gen:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer los nombres de los genes del assay</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>gene_names <span class="ot">&lt;-</span> <span class="fu">Features</span>(data.filt, <span class="at">assay =</span> <span class="st">"RNA"</span>)</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Asignar rownames a cada matriz dentro de la lista y Obtener una lista con todas las matrices de conteos (cada dataset es un dgCMatrix).</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>cell_counts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data.filt<span class="sc">@</span>assays<span class="sc">$</span>RNA<span class="sc">@</span>layers, <span class="cf">function</span>(mat) {</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(mat) <span class="ot">&lt;-</span> gene_names</span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>  mat</span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificacion </span></span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(cell_counts<span class="sc">$</span>counts.covid_1)[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "MIR1302-2HG" "FAM138A"     "OR4F5"       "AL627309.1"  "AL627309.3" 
+ [6] "AL627309.2"  "AL627309.4"  "AL732372.1"  "OR4F29"      "AC114498.1" </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Para cada dataset, calcular el total de lecturas por gen</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>gene_totals <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cell_counts, <span class="cf">function</span>(mat) {</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowSums</span>(mat)  <span class="co"># suma de lecturas por gen</span></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Qué genes son los más abundantes (top 10) en cada dataset?</span></span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> <span class="fu">lapply</span>(gene_totals, <span class="cf">function</span>(x) {</span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>(x, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]  <span class="co"># top 10 genes</span></span>
+<span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-11"><a href="#cb90-11" aria-hidden="true" tabindex="-1"></a>top_genes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$counts.covid_1
+   HBB   HBA2   HBA1 MALAT1 S100A8   ACTB S100A9 MT-CO1   FTH1    FTL 
+ 87625  31652  23028  19400  18541  15977  14824  14593  14582  14458 
+
+$counts.covid_15
+S100A8 S100A9 MALAT1    B2M TMSB4X    FTL   FTH1 MT-CO3 MT-CO2   ACTB 
+ 47344  22219  18111   9906   9653   7105   7033   6679   6505   5694 
+
+$counts.covid_16
+   HBB   HBA2   HBA1 S100A8 S100A9 TMSB4X   FTH1    FTL MT-CO1 MT-CO3 
+208540  66777  40963  12223   9990   7885   7235   6854   6823   6593 
+
+$counts.covid_17
+MALAT1 S100A8 S100A9    B2M    FTL   FTH1 TMSB10 TMSB4X S100A6    LYZ 
+105974  65351  40957  28720  27668  22568  13914  13728  11708  11608 
+
+$counts.ctrl_5
+ MALAT1     B2M  MT-CO1  MT-CO2  MT-CO3 MT-ATP6  TMSB4X  MT-CYB  EEF1A1    GNLY 
+  47129   15047   10061    9968    9774    7029    5465    5287    5117    4777 
+
+$counts.ctrl_13
+ MALAT1     B2M  MT-CO1  MT-CO3  MT-CO2 MT-ATP6  TMSB4X    GNLY  EEF1A1     FTL 
+  40476   15932    9846    8761    8187    7085    6765    6357    5566    4928 
+
+$counts.ctrl_14
+ MALAT1     B2M  MT-CO1  MT-CO2  MT-CO3     HBB  TMSB4X    ACTB     FTL MT-ATP6 
+  35695   12220   10837    9020    8528    8082    6967    6310    6299    6263 
+
+$counts.ctrl_19
+ MALAT1     B2M  TMSB4X  MT-CO1 MT-ATP6  MT-CO2  MT-CO3  S100A9     FTL  MT-ND3 
+  77426   31157   18927   16252   15580   14815   12519    8882    8663    8452 </code></pre>
+</div>
+</div>
+</section>
+<section id="calcular-cuántas-células-expresan-cada-gen" class="level3">
+<h3 class="anchored" data-anchor-id="calcular-cuántas-células-expresan-cada-gen">Calcular cuántas células expresan cada gen</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cell_counts es tu lista de capas con matrices genes × células</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>expr_cells <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cell_counts, <span class="cf">function</span>(mat) {</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># número de células con al menos 1 lectura por gen</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  cells_per_gene <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(mat <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(cells_per_gene) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(mat)</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>  cells_per_gene</span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Si quieres saber de un caso en especifico</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: ver MALAT1 en counts.covid_1</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>expr_cells<span class="sc">$</span>counts.covid_1[<span class="st">"MALAT1"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MALAT1 
+   307 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Crear data.frame con todos los genes y datasets</span></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="co"># lapply va a recorre cada nombre de dataset en la lista.</span></span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a><span class="co"># do.call Une todos esos data.frame en uno solo, apilándolos fila por fila.</span></span>
+<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a>df_expr <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(expr_cells), <span class="cf">function</span>(name) {</span>
+<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># el nombre del dataset actual.</span></span>
+<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">dataset =</span> name,</span>
+<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  los nombres de los genes en ese dataset.</span></span>
+<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">gene =</span> <span class="fu">names</span>(expr_cells[[name]]),</span>
+<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  el número de células que expresan cada gen.</span></span>
+<span id="cb95-14"><a href="#cb95-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cells =</span> expr_cells[[name]]</span>
+<span id="cb95-15"><a href="#cb95-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb95-16"><a href="#cb95-16" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb95-17"><a href="#cb95-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-18"><a href="#cb95-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Filtrar solo los top genes</span></span>
+<span id="cb95-19"><a href="#cb95-19" aria-hidden="true" tabindex="-1"></a><span class="co"># lapply va a recorre cada nombre de dataset en la lista.</span></span>
+<span id="cb95-20"><a href="#cb95-20" aria-hidden="true" tabindex="-1"></a><span class="co"># do.call Une todos esos data.frame en uno solo, apilándolos fila por fila.</span></span>
+<span id="cb95-21"><a href="#cb95-21" aria-hidden="true" tabindex="-1"></a>df_top <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(top_genes), <span class="cf">function</span>(name) {</span>
+<span id="cb95-22"><a href="#cb95-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># obtiene los nombres de los genes top 10 de ese dataset.</span></span>
+<span id="cb95-23"><a href="#cb95-23" aria-hidden="true" tabindex="-1"></a>  genes <span class="ot">&lt;-</span> <span class="fu">names</span>(top_genes[[name]])</span>
+<span id="cb95-24"><a href="#cb95-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb95-25"><a href="#cb95-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># el nombre del dataset</span></span>
+<span id="cb95-26"><a href="#cb95-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">dataset =</span> name,</span>
+<span id="cb95-27"><a href="#cb95-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># el nombre del gen</span></span>
+<span id="cb95-28"><a href="#cb95-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">gene =</span> genes,</span>
+<span id="cb95-29"><a href="#cb95-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># busca en expr_cells cuántas células expresan esos genes específicos.</span></span>
+<span id="cb95-30"><a href="#cb95-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">cells =</span> expr_cells[[name]][genes]</span>
+<span id="cb95-31"><a href="#cb95-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb95-32"><a href="#cb95-32" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb95-33"><a href="#cb95-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-34"><a href="#cb95-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Heatmap</span></span>
+<span id="cb95-35"><a href="#cb95-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_top, <span class="fu">aes</span>(<span class="at">x =</span> dataset, <span class="at">y =</span> gene, <span class="at">fill =</span> cells)) <span class="sc">+</span></span>
+<span id="cb95-36"><a href="#cb95-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="co"># heatmap. con bordeado blanco</span></span>
+<span id="cb95-37"><a href="#cb95-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb95-38"><a href="#cb95-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb95-39"><a href="#cb95-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Número de células que expresan los top genes"</span>,</span>
+<span id="cb95-40"><a href="#cb95-40" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Dataset"</span>,</span>
+<span id="cb95-41"><a href="#cb95-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Gen"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Practica1_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="prevalencia-relativa-de-los-top-genes-entre-condiciones-covid-vs-control" class="level3">
+<h3 class="anchored" data-anchor-id="prevalencia-relativa-de-los-top-genes-entre-condiciones-covid-vs-control">Prevalencia relativa de los top genes entre condiciones (COVID vs control)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular el total de células por dataset</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>total_cells <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cell_counts, <span class="cf">function</span>(mat) <span class="fu">ncol</span>(mat))</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un data.frame con porcentajes a partir de df_top y total_cells</span></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>df_top_percent <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">unique</span>(df_top<span class="sc">$</span>dataset), <span class="cf">function</span>(name) {</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>  total <span class="ot">&lt;-</span> total_cells[[name]]  <span class="co"># total de células en ese dataset</span></span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>  subset_df <span class="ot">&lt;-</span> df_top[df_top<span class="sc">$</span>dataset <span class="sc">==</span> name, ]</span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a>  subset_df<span class="sc">$</span>percent_cells <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> subset_df<span class="sc">$</span>cells <span class="sc">/</span> total</span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a>  subset_df</span>
+<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb96-11"><a href="#cb96-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-12"><a href="#cb96-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver primeras filas</span></span>
+<span id="cb96-13"><a href="#cb96-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_top_percent)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              dataset   gene cells percent_cells
+HBB    counts.covid_1    HBB   204      58.45272
+HBA2   counts.covid_1   HBA2   138      39.54155
+HBA1   counts.covid_1   HBA1   169      48.42407
+MALAT1 counts.covid_1 MALAT1   307      87.96562
+S100A8 counts.covid_1 S100A8   220      63.03725
+ACTB   counts.covid_1   ACTB   344      98.56734</code></pre>
+</div>
+</div>
+<p>Extraer el top genes</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficarlo</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_top_percent, <span class="fu">aes</span>(<span class="at">x =</span> dataset, <span class="at">y =</span> gene, <span class="at">fill =</span> percent_cells)) <span class="sc">+</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="co"># heatmap. con bordeado blanco</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Porcentaje de células que expresan los top genes"</span>,</span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Dataset"</span>,</span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Gen"</span>,</span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"% de células"</span>) <span class="sc">+</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Practica1_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="paso-8.-detección-del-lncrna-malat1" class="level2">
+<h2 class="anchored" data-anchor-id="paso-8.-detección-del-lncrna-malat1">Paso 8. Detección del lncRNA MALAT1</h2>
+<ul>
+<li><strong>Nombre completo:</strong> <em>Metastasis Associated Lung Adenocarcinoma Transcript 1</em></li>
+<li><strong>Tipo de gen:</strong> ARN largo no codificante (lncRNA), también llamado <strong>NEAT2</strong>.</li>
+<li><strong>Localización:</strong> Cromosoma 11q13.1 en humanos.</li>
+<li><strong>Función principal:</strong>
+<ul>
+<li>Regulación de la expresión génica a nivel de splicing y transcripción.</li>
+<li>Participa en la organización de dominios nucleares llamados “speckles”.</li>
+<li>Influye en la proliferación y migración celular.</li>
+</ul></li>
+<li><strong>Expresión:</strong> Se encuentra altamente expresado en muchos tejidos, y en datos de scRNA-seq suele aparecer como uno de los genes con más lecturas porque es muy abundante en el núcleo.</li>
+</ul>
+<section id="calcular-el-porcentaje-de-umis-de-malat1-por-célula" class="level3">
+<h3 class="anchored" data-anchor-id="calcular-el-porcentaje-de-umis-de-malat1-por-célula">1. Calcular el porcentaje de UMIs de MALAT1 por célula</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>malat1_percent <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cell_counts, <span class="cf">function</span>(mat) {</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  gene_counts <span class="ot">&lt;-</span> mat[<span class="st">"MALAT1"</span>, ]          <span class="co"># lecturas de MALAT1 por célula</span></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  total_counts <span class="ot">&lt;-</span> <span class="fu">colSums</span>(mat)            <span class="co"># total de lecturas por célula</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">100</span> <span class="sc">*</span> gene_counts <span class="sc">/</span> total_counts        <span class="co"># porcentaje de UMIs de MALAT1</span></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="calcular-la-proporción-de-células-que-superan-el-umbral-del-20-de-los-umis" class="level3">
+<h3 class="anchored" data-anchor-id="calcular-la-proporción-de-células-que-superan-el-umbral-del-20-de-los-umis">2. Calcular la proporción de células que superan el umbral del 20% de los UMIs</h3>
+<p><em>MALAT1</em> es extremadamente abundante, por lo que puede representar un gran porcentaje de los UMIs en algunas células. Debido a esto es importante calcular su presencia:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>malat1_summary <span class="ot">&lt;-</span> <span class="fu">lapply</span>(malat1_percent, <span class="cf">function</span>(pct) {</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># número total de células en el dataset.</span></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  total_cells <span class="ot">&lt;-</span> <span class="fu">length</span>(pct)</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># número de células con &gt;20% UMIs de MALAT1</span></span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>  cells_above <span class="ot">&lt;-</span> <span class="fu">sum</span>(pct <span class="sc">&gt;</span> <span class="dv">20</span>)      </span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  el porcentaje de células que cumplen esa condición.</span></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>  percent_cells <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> cells_above <span class="sc">/</span> total_cells</span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">total_cells =</span> total_cells,</span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">cells_above =</span> cells_above,</span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">percent_cells =</span> percent_cells)</span>
+<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>malat1_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$counts.covid_1
+$counts.covid_1$total_cells
+[1] 349
+
+$counts.covid_1$cells_above
+[1] 0
+
+$counts.covid_1$percent_cells
+[1] 0
+
+
+$counts.covid_15
+$counts.covid_15$total_cells
+[1] 462
+
+$counts.covid_15$cells_above
+[1] 0
+
+$counts.covid_15$percent_cells
+[1] 0
+
+
+$counts.covid_16
+$counts.covid_16$total_cells
+[1] 298
+
+$counts.covid_16$cells_above
+[1] 0
+
+$counts.covid_16$percent_cells
+[1] 0
+
+
+$counts.covid_17
+$counts.covid_17$total_cells
+[1] 581
+
+$counts.covid_17$cells_above
+[1] 16
+
+$counts.covid_17$percent_cells
+[1] 2.753873
+
+
+$counts.ctrl_5
+$counts.ctrl_5$total_cells
+[1] 164
+
+$counts.ctrl_5$cells_above
+[1] 0
+
+$counts.ctrl_5$percent_cells
+[1] 0
+
+
+$counts.ctrl_13
+$counts.ctrl_13$total_cells
+[1] 185
+
+$counts.ctrl_13$cells_above
+[1] 0
+
+$counts.ctrl_13$percent_cells
+[1] 0
+
+
+$counts.ctrl_14
+$counts.ctrl_14$total_cells
+[1] 212
+
+$counts.ctrl_14$cells_above
+[1] 5
+
+$counts.ctrl_14$percent_cells
+[1] 2.358491
+
+
+$counts.ctrl_19
+$counts.ctrl_19$total_cells
+[1] 297
+
+$counts.ctrl_19$cells_above
+[1] 0
+
+$counts.ctrl_19$percent_cells
+[1] 0</code></pre>
+</div>
+</div>
+</section>
+<section id="calcular-el-porcentaje-global" class="level3">
+<h3 class="anchored" data-anchor-id="calcular-el-porcentaje-global">3. Calcular el porcentaje global</h3>
+<p>El lncRNA <em>MALAT1</em> se usa como marcador de calidad, porque un exceso de <em>MALAT1</em> puede indicar <strong>sesgo técnico</strong>. También puede ser biológicamente relevante, ya que regula procesos nucleares.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>total_cells_all <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">sapply</span>(malat1_summary, <span class="cf">function</span>(x) x<span class="sc">$</span>total_cells))</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>cells_above_all <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">sapply</span>(malat1_summary, <span class="cf">function</span>(x) x<span class="sc">$</span>cells_above))</span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>percent_global <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> cells_above_all <span class="sc">/</span> total_cells_all</span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>percent_global</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8241758</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="interpretación" class="level2">
+<h2 class="anchored" data-anchor-id="interpretación">Interpretación 🔎</h2>
+<ul>
+<li>En todos tus datasets, <strong>menos del 0.44% de las células</strong> tienen MALAT1 representando más del 20% de sus UMIs.</li>
+<li>Esto significa que, aunque MALAT1 aparece como un gen muy abundante en el total de lecturas, <strong>solo un pequeño subconjunto de células está dominado por él</strong>.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Resumen
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Este tipo de ejercicio es útil para explicar que en lka técnica de <strong>scRNA-seq,</strong> un gen puede acumular <strong>muchísimas lecturas totales</strong>, pero eso no significa que esté presente en la mayoría de las células.</p>
+<p>En un experimento de <strong>single-cell RNA sequencing (scRNA-seq)</strong> es importante no confundir tres niveles distintos de información:</p>
+<ul>
+<li><strong>Lecturas (reads/UMIs):</strong> Son las secuencias crudas que se obtienen del secuenciador. Cada lectura corresponde a un fragmento de ARN capturado. Se asignan a genes y se cuentan. 👉 Ejemplo: “MALAT1 tiene 307 lecturas en el dataset covid_1”.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>expr_cells<span class="sc">$</span>counts.covid_1[<span class="st">"MALAT1"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MALAT1 
+   307 </code></pre>
+</div>
+</div>
+<ul>
+<li><p><strong>Células:</strong> Cada columna de la matriz de conteos representa una célula individual. Lo que analizamos es cuántas lecturas de cada gen caen en cada célula. 👉 Ejemplo: “En menos 0.44% de las células, MALAT1 constituye más del 20% de los UMIs”.</p></li>
+<li><p><strong>Datasets:</strong> Son los conjuntos de células que provienen de una condición experimental o muestra (ej. pacientes COVID, controles sanos). Cada dataset es una matriz genes × células. 👉 Ejemplo: “El dataset <code>counts.covid_1</code> contiene 349 células”.</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>total_cells<span class="sc">$</span>counts.covid_1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 349</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="paso-9.-normalización-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="paso-9.-normalización-de-los-datos">Paso 9. Normalización de los datos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>pbmc <span class="ot">&lt;-</span> <span class="fu">NormalizeData</span>(data.filt, <span class="at">verbose =</span> F)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="paso-10.-guardar-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="paso-10.-guardar-dataset">Paso 10. Guardar dataset</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pbmc, <span class="at">file =</span> <span class="st">"output/pbmc3k_tutorial.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Hasta este paso tendremos <code>counts</code> y <code>data</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://rnabio.org/module-08-scrna/0008/02/01/QA_clustering/"><img src="images/seurat_object.normalize.png" class="img-fluid figure-img"></a></p>
+<figcaption>Quality Assessment/Clustering</figcaption>
+</figure>
+</div>
+</section>
+<section id="referencias" class="level2">
+<h2 class="anchored" data-anchor-id="referencias"><strong>Referencias</strong></h2>
 <ul>
 <li><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689">Información del dataset de GEO GSE149689</a></li>
 <li><a href="https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html">Más explicación de este dataset GSE149689</a></li>
 <li><a href="https://raw.githubusercontent.com/NBISweden/workshop-scRNAseq/master/scripts/data_processing/subsample_covid_data.Rmd">Preprocesamiento de las muestras GSE149689 - Código original</a></li>
 <li><a href="https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_01_qc.html">Limpieza de QC</a></li>
+<li><a href="https://rnabio.org/module-08-scrna/0008/02/01/QA_clustering/">Quality Assessment/Clustering</a></li>
 </ul>
-</section>
 </section>
 
 </main>

@@ -1,5 +1,6 @@
 ---
 title: "Práctica 1: COVID-19 vs healhty"
+subtitle: "Control de calidad y normalización de los datos"
 author: "Evelia Coss"
 date: 03/24/2026
 format: html
@@ -12,7 +13,7 @@ editor: visual
 
 -   **Título del estudio:** Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19
 -   **Especie:** *Homo sapiens*
--   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):**
+-   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):** [GSE149689](GSE149689)
 -   **Tipo de experimento:** scRNA-seq
 
 **Antecedentes:**
@@ -78,11 +79,9 @@ Archivos que estamos descargando del estudio **GSE149689**:
     -   Representa cuántas veces se detectó cada gen en cada célula.
     -   Este archivo, junto con *barcodes* y *features*, forma el conjunto completo para reconstruir el objeto de análisis en herramientas como **Seurat**.
 
-[![Información suplementaria encontrada en GEO para el **GSE149689.**](images/clipboard-1556849944.png){#fig-data}](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
+[![Información suplementaria encontrada en GEO para el GSE149689.](images/DatosGEO.png)](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
 
-[![Información suplementaria encontrada en GEO para el **GSE149689.**](images/DatosGEO.png)](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
-
-```{r datasets, message=FALSE, warning=FALSE}
+```{r datasets, eval=FALSE, message=FALSE, warning=FALSE}
 # Nombre de la carpeta
 dest_dir <- "fullData"
 
@@ -125,7 +124,7 @@ for (url in urls) {
 
 ```{r}
 # Leer la matriz de conteos
-sm <- as(Matrix::readMM("fullData/GSE149689_matrix.mtx.gz"),Class = "dgCMatrix")
+sm <- as(Matrix::readMM("fullData/GSE149689_matrix.mtx.gz"), Class = "dgCMatrix")
 # Leer nombres de genes y células
 genes <- as.character(read.delim("fullData/GSE149689_features.tsv.gz", header = FALSE)[,2])
 cells <- as.character(read.delim("fullData/GSE149689_barcodes.tsv.gz", header = FALSE)[,1])
@@ -198,7 +197,7 @@ samples_use <- c(c(1,15,16,17),c(5,13,14,19))
 # ¿cuántas células pertenecen en total a las muestras 1, 5, 13, 14, 15, 16, 17 y 19?
 sum(table(sub(".*-","",colnames(sm)))[as.character(samples_use)]) # 39628
 
-# Selección aleatoria de células de las muestras que definiste en samples_use.
+# Selección aleatoria de células de las muestras que definiste en samples_use
 sel <- unlist(lapply(samples_use,function(x){
   set.seed(1);x <- sample(size = 1500,grep(paste0("-",x,"$"),colnames(sm),value = T) )
 }))
@@ -443,22 +442,285 @@ VlnPlot(alldata, group.by = "orig.ident", split.by = "type", features = feats, p
 ```
 
 ```{r}
-FeatureScatter(alldata, "nCount_RNA", "nFeature_RNA", group.by = "orig.ident", pt.size = .5)
+plot1 <- FeatureScatter(alldata, feature1 = "nCount_RNA", feature2 = "percent_mito", group.by = "orig.ident", pt.size = .5)
+plot2 <- FeatureScatter(alldata, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", group.by = "orig.ident", pt.size = .5)
+plot1 + plot2
 ```
 
-## Paso 7. Filtrado de células con baja calidad
+Número de células ANTES del filtrado:
 
 ```{r}
-selected_c <- WhichCells(alldata, expression = nFeature_RNA > 200)
-selected_f <- rownames(alldata)[Matrix::rowSums(alldata) > 3]
+table(alldata$orig.ident)
+```
 
-data.filt <- subset(alldata, features = selected_f, cells = selected_c)
+## Paso 7. Filtrado de células con baja calidad (primer filtro)
+
+Estaremos filtrando las células con al menos 200 genes detectados, y los genes deben estar expresados en al menos tres células. Estos valores dependen del método de preparación de la biblioteca utilizado.
+
+-   **Genes mitocondriales:** Una alta proporción de lecturas mitocondriales suele indicar células dañadas o en apoptosis. Por eso se filtran células con \< 10% de lecturas mitocondriales.
+
+-   **Genes ribosomales:** Son muy abundantes y pueden dominar la señal, pero no aportan información biológica específica sobre el estado celular. Control de sesgo técnico, pero sin eliminar células normales con actividad ribosomal fisiológica.
+
+```{r}
+data.filt <- subset(alldata, subset = nFeature_RNA > 200 & 
+                      nFeature_RNA < 2500 & percent_mito < 10 &
+                      percent_ribo < 20)
 dim(data.filt)
 ```
 
-### **Referencias**
+```{r}
+data.filt
+```
+
+Tenemos 33, 538 genes detectados en 2,548 células. Estas células se encuentran distribuidas en los siguientes datasets:
+
+```{r}
+table(data.filt$orig.ident)
+```
+
+-   ¿Dónde se almacenan la métricas de QC en Seurat?
+
+Están almacenadas en la seccion de `@meta.data` del objeto Seurat.
+
+```{r}
+# Opción A
+head(data.filt@meta.data, 5)
+# Opción B
+# head(data.filt[[]], 5)
+```
+
+Si quieres ver qué capas tienes disponibles en tu objeto:
+
+```{r}
+Layers(data.filt, assay = "RNA")
+```
+
+### ¿Cuántas lecturas totales tiene cada gen en cada dataset?
+
+Además, también podemos ver qué genes contribuyen en mayor medida a esas lecturas. Por ejemplo, podemos representar gráficamente el porcentaje de recuentos por gen:
+
+```{r}
+# Extraer los nombres de los genes del assay
+gene_names <- Features(data.filt, assay = "RNA")
+
+# Asignar rownames a cada matriz dentro de la lista y Obtener una lista con todas las matrices de conteos (cada dataset es un dgCMatrix).
+cell_counts <- lapply(data.filt@assays$RNA@layers, function(mat) {
+  rownames(mat) <- gene_names
+  mat
+})
+
+# Verificacion 
+rownames(cell_counts$counts.covid_1)[1:10]
+
+# Para cada dataset, calcular el total de lecturas por gen
+gene_totals <- lapply(cell_counts, function(mat) {
+  rowSums(mat)  # suma de lecturas por gen
+})
+
+# ¿Qué genes son los más abundantes (top 10) en cada dataset?
+top_genes <- lapply(gene_totals, function(x) {
+  sort(x, decreasing = TRUE)[1:10]  # top 10 genes
+})
+
+top_genes
+```
+
+### Calcular cuántas células expresan cada gen
+
+```{r}
+# cell_counts es tu lista de capas con matrices genes × células
+expr_cells <- lapply(cell_counts, function(mat) {
+  # número de células con al menos 1 lectura por gen
+  cells_per_gene <- rowSums(mat > 0)
+  names(cells_per_gene) <- rownames(mat)
+  cells_per_gene
+})
+```
+
+Si quieres saber de un caso en especifico
+
+```{r}
+# Ejemplo: ver MALAT1 en counts.covid_1
+expr_cells$counts.covid_1["MALAT1"]
+```
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+# 1. Crear data.frame con todos los genes y datasets
+# lapply va a recorre cada nombre de dataset en la lista.
+# do.call Une todos esos data.frame en uno solo, apilándolos fila por fila.
+df_expr <- do.call(rbind, lapply(names(expr_cells), function(name) {
+  data.frame(
+    # el nombre del dataset actual.
+    dataset = name,
+    #  los nombres de los genes en ese dataset.
+    gene = names(expr_cells[[name]]),
+    #  el número de células que expresan cada gen.
+    cells = expr_cells[[name]]
+  )
+}))
+
+# 2. Filtrar solo los top genes
+# lapply va a recorre cada nombre de dataset en la lista.
+# do.call Une todos esos data.frame en uno solo, apilándolos fila por fila.
+df_top <- do.call(rbind, lapply(names(top_genes), function(name) {
+  # obtiene los nombres de los genes top 10 de ese dataset.
+  genes <- names(top_genes[[name]])
+  data.frame(
+    # el nombre del dataset
+    dataset = name,
+    # el nombre del gen
+    gene = genes,
+    # busca en expr_cells cuántas células expresan esos genes específicos.
+    cells = expr_cells[[name]][genes]
+  )
+}))
+
+# Heatmap
+ggplot(df_top, aes(x = dataset, y = gene, fill = cells)) +
+  geom_tile(color = "white") + # heatmap. con bordeado blanco
+  scale_fill_gradient(low = "white", high = "red") +
+  theme_minimal() +
+  labs(title = "Número de células que expresan los top genes",
+       x = "Dataset",
+       y = "Gen")
+```
+
+### Prevalencia relativa de los top genes entre condiciones (COVID vs control)
+
+```{r}
+# Calcular el total de células por dataset
+total_cells <- lapply(cell_counts, function(mat) ncol(mat))
+
+# Crear un data.frame con porcentajes a partir de df_top y total_cells
+df_top_percent <- do.call(rbind, lapply(unique(df_top$dataset), function(name) {
+  total <- total_cells[[name]]  # total de células en ese dataset
+  subset_df <- df_top[df_top$dataset == name, ]
+  subset_df$percent_cells <- 100 * subset_df$cells / total
+  subset_df
+}))
+
+# Ver primeras filas
+head(df_top_percent)
+```
+
+Extraer el top genes
+
+```{r}
+# Graficarlo
+ggplot(df_top_percent, aes(x = dataset, y = gene, fill = percent_cells)) +
+  geom_tile(color = "white") + # heatmap. con bordeado blanco
+  scale_fill_gradient(low = "white", high = "blue") +
+  theme_minimal() +
+  labs(title = "Porcentaje de células que expresan los top genes",
+       x = "Dataset",
+       y = "Gen",
+       fill = "% de células") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Paso 8. Detección del lncRNA MALAT1
+
+-   **Nombre completo:** *Metastasis Associated Lung Adenocarcinoma Transcript 1*
+-   **Tipo de gen:** ARN largo no codificante (lncRNA), también llamado **NEAT2**.
+-   **Localización:** Cromosoma 11q13.1 en humanos.
+-   **Función principal:**
+    -   Regulación de la expresión génica a nivel de splicing y transcripción.
+    -   Participa en la organización de dominios nucleares llamados “speckles”.
+    -   Influye en la proliferación y migración celular.
+-   **Expresión:** Se encuentra altamente expresado en muchos tejidos, y en datos de scRNA-seq suele aparecer como uno de los genes con más lecturas porque es muy abundante en el núcleo.
+
+### 1. Calcular el porcentaje de UMIs de MALAT1 por célula
+
+```{r}
+malat1_percent <- lapply(cell_counts, function(mat) {
+  gene_counts <- mat["MALAT1", ]          # lecturas de MALAT1 por célula
+  total_counts <- colSums(mat)            # total de lecturas por célula
+  100 * gene_counts / total_counts        # porcentaje de UMIs de MALAT1
+})
+```
+
+### 2. Calcular la proporción de células que superan el umbral del 20% de los UMIs
+
+*MALAT1* es extremadamente abundante, por lo que puede representar un gran porcentaje de los UMIs en algunas células. Debido a esto es importante calcular su presencia:
+
+```{r}
+malat1_summary <- lapply(malat1_percent, function(pct) {
+  # número total de células en el dataset.
+  total_cells <- length(pct)
+  # número de células con >20% UMIs de MALAT1
+  cells_above <- sum(pct > 20)      
+  #  el porcentaje de células que cumplen esa condición.
+  percent_cells <- 100 * cells_above / total_cells
+  list(total_cells = total_cells,
+       cells_above = cells_above,
+       percent_cells = percent_cells)
+})
+
+malat1_summary
+```
+
+### 3. Calcular el porcentaje global
+
+El lncRNA *MALAT1* se usa como marcador de calidad, porque un exceso de *MALAT1* puede indicar **sesgo técnico**. También puede ser biológicamente relevante, ya que regula procesos nucleares.
+
+```{r}
+total_cells_all <- sum(sapply(malat1_summary, function(x) x$total_cells))
+cells_above_all <- sum(sapply(malat1_summary, function(x) x$cells_above))
+
+percent_global <- 100 * cells_above_all / total_cells_all
+percent_global
+```
+
+## Interpretación 🔎
+
+-   En todos tus datasets, **menos del 0.44% de las células** tienen MALAT1 representando más del 20% de sus UMIs.
+-   Esto significa que, aunque MALAT1 aparece como un gen muy abundante en el total de lecturas, **solo un pequeño subconjunto de células está dominado por él**.
+
+::: callout-note
+## Resumen
+
+Este tipo de ejercicio es útil para explicar que en lka técnica de **scRNA-seq,** un gen puede acumular **muchísimas lecturas totales**, pero eso no significa que esté presente en la mayoría de las células.
+
+En un experimento de **single-cell RNA sequencing (scRNA-seq)** es importante no confundir tres niveles distintos de información:
+
+-   **Lecturas (reads/UMIs):** Son las secuencias crudas que se obtienen del secuenciador. Cada lectura corresponde a un fragmento de ARN capturado. Se asignan a genes y se cuentan. 👉 Ejemplo: “MALAT1 tiene 307 lecturas en el dataset covid_1”.
+
+```{r}
+expr_cells$counts.covid_1["MALAT1"]
+```
+
+-   **Células:** Cada columna de la matriz de conteos representa una célula individual. Lo que analizamos es cuántas lecturas de cada gen caen en cada célula. 👉 Ejemplo: “En menos 0.44% de las células, MALAT1 constituye más del 20% de los UMIs”.
+
+-   **Datasets:** Son los conjuntos de células que provienen de una condición experimental o muestra (ej. pacientes COVID, controles sanos). Cada dataset es una matriz genes × células. 👉 Ejemplo: “El dataset `counts.covid_1` contiene 349 células”.
+
+```{r}
+total_cells$counts.covid_1
+```
+:::
+
+## Paso 9. Normalización de los datos
+
+```{r}
+pbmc <- NormalizeData(data.filt, verbose = F)
+```
+
+## Paso 10. Guardar dataset
+
+```{r}
+saveRDS(pbmc, file = "output/pbmc3k_tutorial.rds")
+```
+
+Hasta este paso tendremos `counts` y `data`.
+
+[![Quality Assessment/Clustering](images/seurat_object.normalize.png)](https://rnabio.org/module-08-scrna/0008/02/01/QA_clustering/)
+
+## **Referencias**
 
 -   [Información del dataset de GEO GSE149689](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
 -   [Más explicación de este dataset GSE149689](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html)
 -   [Preprocesamiento de las muestras GSE149689 - Código original](https://raw.githubusercontent.com/NBISweden/workshop-scRNAseq/master/scripts/data_processing/subsample_covid_data.Rmd)
 -   [Limpieza de QC](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_01_qc.html)
+-   [Quality Assessment/Clustering](https://rnabio.org/module-08-scrna/0008/02/01/QA_clustering/)
