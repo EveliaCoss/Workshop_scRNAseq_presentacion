@@ -41,11 +41,14 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 
 - Fecha: 25/03/2026
 - Presentación: [Clase 3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase3_features.html#1)
+- Descarga el archivo: [Practica2.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica2.qmd)
+- Visualización del reporte final: [Practica2](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica2.html)
 
 ### Clase 4. Identificación de genes marcadores
 
 - Fecha: 08/04/2026
-- Presentación: Clase 4
+- Presentación: [Clase 4](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase4_Biomarkers_Anotacion.html)
+- Descarga el archivo: [Practica3.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica3.qmd)
 
 ### Clase 5. Anotación de tipos celulares e Inferencia de trayectorias
 
