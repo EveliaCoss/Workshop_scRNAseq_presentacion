@@ -36,6 +36,7 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 - Presentación: [Clase 2](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase2_Normalizacion.html#1)
 - Descarga el archivo: [Practica1.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica1.qmd)
 - Visualización del reporte final: [Practica1](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica1.html)
+  + 🌟 Checkpoint: [pbmc3k_tutorial.rds](https://drive.google.com/file/d/121V7fFNFKmuG5cD7ng_mYt3DMEGoFErw/view?usp=drive_link)
 
 ### Clase 3. Selección de genes altamente variables, Reducción de dimensiones y clustering
 
@@ -43,14 +44,16 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 - Presentación: [Clase 3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase3_features.html#1)
 - Descarga el archivo: [Practica2.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica2.qmd)
 - Visualización del reporte final: [Practica2](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica2.html)
-
+  + 🌟 Checkpoint: [pbmc3k_integrated.rds](https://drive.google.com/file/d/1D5BQAt-8x-eYQo2_6S5muEE4nbXMuL6d/view?usp=drive_link)
+  
 ### Clase 4. Identificación de genes marcadores y Anotación de tipos celulares
 
 - Fecha: 08/04/2026
 - Presentación: [Clase 4](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase4_Biomarkers_Anotacion.html)
 - Descarga el archivo: [Practica3.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica3.qmd)
 - Visualización del reporte final: [Practica3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica3.html)
-
+  + 🌟 Checkpoint: [pbmc3k_annotated.rds](https://drive.google.com/file/d/12SuvKiwChYNxuawaZH5UAhcDqx1IIspr/view?usp=drive_link)
+  
 ### Clase 5. Expresión diferencial por condiciones e Inferencia de trayectorias
 
 - Fecha: 15/04/2026

@@ -1,8 +1,8 @@
 ---
 title: "Single cell RNA seq"
-subtitle: "⚔<br/>Normalización de los datos"  
+subtitle: "⚔<br/>Expresión diferencial por condiciones e Inferencia de trayectorias"  
 author: "Dra. Evelia Coss"
-date: "18/marzo/2026"
+date: "15/abril/2026"
 output:
   xaringan::moon_reader:
     css: 
@@ -148,29 +148,6 @@ class: inverse, center, middle
 ---
 
 ---
-
-.pull-left[
-## **Gradientes** en UMAP 
-
-- Es una **transición continua** en los datos.
-- **Variación continua** en los datos.
-- Se interpreta como un **cambio progresivo** en la expresión génica.
-- **¿Cómo se calcula?:** aparece al reducir dimensionalidad (ej. UMAP, PCA, t-SNE) y observar un continuo de células en lugar de clústeres discretos.
-- **¿De qué depende?:** de la matriz de expresión génica (scRNA-seq) y de la técnica de reducción de dimensionalidad. 
-- **Resultado:** muestra variación progresiva en perfiles de expresión.grad
-]
-
-
-.pull-right[
-Ejemplo: células que muestran un aumento gradual en la expresión de un marcador conforme pasan de un estado “A” a un estado “B”.
-
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("figures/gradiente_exp1.png")
-```
-]
-
-.footnote-right[ 
-[Ejemplo PBMC3K](https://satijalab.org/seurat/articles/pbmc3k_tutorial)]
 
 ---
 
