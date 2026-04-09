@@ -441,13 +441,15 @@ class: inverse, center, middle
   + 🌟 Checkpoint: [pbmc3k_tutorial.rds](https://drive.google.com/file/d/121V7fFNFKmuG5cD7ng_mYt3DMEGoFErw/view?usp=drive_link)
 
 - **Reducción de dimensiones e integración de datos**
-  + Descarga el archivo: [Practica2.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica1.qmd)
+  + Descarga el archivo: [Practica2.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica2.qmd)
   + Visualización del reporte final: [Practica2](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica
 /Practica2.html)
   + 🌟 Checkpoint: [pbmc3k_integrated.rds](https://drive.google.com/file/d/1D5BQAt-8x-eYQo2_6S5muEE4nbXMuL6d/view?usp=drive_link)
 
 - **Biomarcadores y anotación de los tipos celulares**
-  + Descarga el archivo: [Practica3.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica1.qmd)
+  + Descarga el archivo: [Practica3.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica3.qmd)
+  + Visualización del reporte final: [Practica3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica
+/Practica3.html)
   + 🌟 Checkpoint: [pbmc3k_annotated.rds](https://drive.google.com/file/d/12SuvKiwChYNxuawaZH5UAhcDqx1IIspr/view?usp=drive_link)
   
 ---

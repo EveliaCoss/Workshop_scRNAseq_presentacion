@@ -16,8 +16,6 @@ output:
       countIncrementalSlides: false
       ratio: 16:9
       slideNumberFormat: "%current%/%total%"           # Numeracion de paginas en el estilo 12/42 
-
-
 ---
 
 ```{r setup, include = FALSE}
