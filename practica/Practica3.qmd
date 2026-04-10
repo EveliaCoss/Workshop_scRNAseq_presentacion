@@ -229,6 +229,7 @@ wrap_plots(
 # convertir de objeto seurat a SingleCellExperiment
 sce <- as.SingleCellExperiment(pbmc_integrated)
 sce
+# saveRDS(sce, file = "output/sce.rds")
 ```
 
 Ahora utilizaremos un paquete llamado `SingleR` para etiquetar cada célula. `SingleR` utiliza un conjunto de datos de referencia de tipos celulares con datos de expresión para deducir la mejor etiqueta para cada célula. El paquete `celldex` contiene una práctica recopilación de referencias de tipos celulares que, actualmente, incluye los siguientes conjuntos:

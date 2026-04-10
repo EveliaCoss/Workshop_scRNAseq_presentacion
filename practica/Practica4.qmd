@@ -1,0 +1,440 @@
+---
+title: "Práctica 4: COVID-19 vs healhty"
+subtitle: ""
+author: "Evelia Coss"
+date: 04/09/2026
+format: html
+editor: visual
+---
+
+## Descripción de los datos
+
+### Información general
+
+-   **Título del estudio:** Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19
+-   **Especie:** *Homo sapiens*
+-   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):** [GSE149689](GSE149689)
+-   **Tipo de experimento:** scRNA-seq
+
+## Paso 1. Cargar paquetes y datasets en R
+
+### Cargar paquetes
+
+```{r paquetes, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(patchwork)
+# BiocManager::install(c("SingleCellExperiment","SingleR","celldex"),ask=F)
+library(viridis)
+library(Seurat)
+# Anotacion de tipos celulares
+library(SingleCellExperiment)
+library(SingleR)
+library(celldex)
+# Expresion diferencial
+library(edgeR)
+library(RColorBrewer)
+# trayetcoria
+library(plotly) # figura interactiva
+options(rgl.printRglwidget = TRUE)
+library(sparseMatrixStats)
+library(slingshot) # BiocManager::install("slingshot")
+library(tradeSeq)
+library(Matrix)
+```
+
+### Cargar el dataset de pbmc_integrated
+
+Objetos obtenidos de de la Practica 2.
+
+```{r, warning=F, message=FALSE}
+# Cargar el objeto desde el archivo RDS
+pbmc_integrated <- readRDS("output/pbmc3k_integrated.rds")
+
+# Unir las capas del assay activo (ej. RNA)
+pbmc_integrated <- JoinLayers(pbmc_integrated)
+
+# convertir de objeto seurat a SingleCellExperiment
+sce <- as.SingleCellExperiment(pbmc_integrated)
+
+# descargar referencia de human cell atlas
+ref.set <- celldex::HumanPrimaryCellAtlasData()
+
+# Set the identity as louvain with resolution 0.5
+sel.clust <- "RNA_snn_res.0.5"
+# La identidad activa (active.ident) es la variable que Seurat usa por defecto para agrupar células en funciones como FindMarkers, DimPlot, etc
+alldata <- SetIdent(pbmc_integrated, value = sel.clust)
+# Número de células en cada cluster 
+table(alldata@active.ident)
+```
+
+## Paso 2. **Asignar identidad celular a los clusters (**`SingleR` **+** `celldex`**)** 
+
+Ahora etiquetaremos nuestras células utilizando el objeto \`SingleCellExperiment\`, con la referencia establecida anteriormente.
+
+```{r}
+pred_main <- SingleR::SingleR(test = sce, 
+                              ref = ref.set, 
+                              labels = ref.set$label.main)
+
+pred_fine <- SingleR::SingleR(test = sce, 
+                           ref = ref.set,
+                           labels = ref.set$label.fine)
+```
+
+Conserva los tipos que tengan más de 10 celdas en la etiqueta, vuelve a asignar esas etiquetas a nuestro objeto Seurat y visualízalas en nuestro umap.
+
+```{r}
+lbls.keep <- table(pred_main$labels) > 10
+
+pbmc_annotated <- pbmc_integrated
+pbmc_annotated$SingleR.labels <- ifelse(lbls.keep[pred_main$labels], pred_main$labels, 'Other')
+
+DimPlot(pbmc_annotated, reduction='umap', group.by='SingleR.labels')
+```
+
+Es bueno ver que, aunque SingleR no utiliza los clústeres que calculamos anteriormente, las etiquetas parecen coincidir bastante bien con esos clústeres.
+
+How many cells have low confidence labels?
+
+```{r}
+unique(pred_main$pruned.labels)
+```
+
+```{r}
+# Opción A
+table(pred_main$pruned.labels)
+```
+
+```{r}
+# Opción B
+table(pred_main$labels)
+```
+
+```{r}
+summary(is.na(pred_main$pruned.labels))
+```
+
+Are there more or less pruned labels for the fine labels?
+
+```{r}
+summary(is.na(pred_fine$pruned.labels))
+```
+
+Now that we understand what the singleR dataframe looks like and what the data contains, let’s begin to visualize the data.
+
+```{r, warning=FALSE, message=FALSE}
+plotDeltaDistribution(pred_main, ncol = 4, dots.on.top = FALSE)
+```
+
+```{r}
+plotScoreHeatmap(pred_main)
+```
+
+Rather than only working with the singleR dataframe, we can add the labels to our Seurat data object as a metadata field, so let’s add the cell type labels to our seurat object.
+
+```{r}
+#add main labels to object
+pbmc_annotated[['immgen_singler_main']] = rep('NA', ncol(pbmc_annotated))
+pbmc_annotated$immgen_singler_main[rownames(pred_main)] = pred_main$labels
+
+#add fine labels to object
+pbmc_annotated[['immgen_singler_fine']] = rep('NA', ncol(pbmc_annotated))
+pbmc_annotated$immgen_singler_fine[rownames(pred_fine)] = pred_fine$labels
+```
+
+Comparing the labels obtained from the three sources, we can see many interesting discrepancies. Sorthing those out requires manual curation. However, many informative assignments can be seen. For example, small cluster 17 is repeatedly identified as plasma B cells. This distinct subpopulation displays markers such as CD38 and CD59.
+
+```{r, warning=FALSE, message=FALSE}
+FeaturePlot(pbmc_annotated, "CD38") + scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "Spectral")))
+```
+
+Similarly, cluster 13 is identified to be MAIT cells. Literature suggests that blood MAIT cells are characterized by high expression of CD161 (KLRB1), and chemokines like CXCR6. This indeed seems to be the case; however, this cell type is harder to evaluate.
+
+```{r, warning=FALSE, message=FALSE}
+FeaturePlot(pbmc_annotated, "KLRB1") + scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "Spectral")))
+```
+
+## Paso 3. Guardar dataset
+
+```{r, eval=FALSE}
+saveRDS(pbmc_annotated, file = "output/pbmc3k_singler_annotated.rds")
+```
+
+## **Paso 4. Visualización de los datos**
+
+```{r}
+#visualizing the relative proportion of cell types across our samples
+ggplot(pbmc_annotated[[]], aes(x = orig.ident, fill = immgen_singler_main)) + 
+  geom_bar(position = "fill") + 
+  scale_fill_viridis(discrete = TRUE)
+```
+
+We can also flip the samples and cell labels and view this data as below.
+
+```{r}
+ggplot(pbmc_annotated[[]], aes(x = immgen_singler_main, fill = orig.ident)) + 
+  geom_bar(position = "fill") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  scale_fill_viridis(discrete = TRUE)
+```
+
+```{r}
+ggplot(pbmc_annotated[[]], aes(x = immgen_singler_fine, fill = orig.ident)) + 
+  geom_bar(position = "fill") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  scale_fill_viridis(discrete = TRUE) 
+```
+
+How do our cell type annotations map to our clusters we defined previously?
+
+```{r}
+wrap_plots(
+  # main
+  DimPlot(pbmc_annotated, group.by = c("immgen_singler_main")) + 
+  # Eliminar axis
+  NoAxes(),
+  # fine
+  DimPlot(pbmc_annotated, group.by = c("immgen_singler_fine")) + 
+  # Eliminar leyendas
+  NoLegend() + 
+  # Eliminar axis
+  NoAxes(), 
+ncol = 2)
+
+```
+
+Si quieres separar y visualizar un tipo celular puedes
+
+```{r}
+unique(pbmc_annotated$immgen_singler_main)
+```
+
+```{r}
+pbmc_annotated.celltype <- pbmc_annotated[, pbmc_annotated$immgen_singler_main == "Monocyte" ]
+
+DimPlot(pbmc_annotated.celltype) + 
+  # Eliminar leyendas
+  NoLegend() + 
+  # Eliminar axis
+  NoAxes()
+```
+
+## **Paso 5. Ciclo celular**
+
+[![](images/cell_cycle.png)](https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html)
+
+1.  Listas de genes de ciclo celular
+
+-   Seurat incluye listas de genes asociados a fase S y G2/M (`cc.genes.updated.2019`).
+
+2.  Asignar fases con `CellCycleScoring`
+
+```{r}
+# Cargar listas de genes
+s.genes <- cc.genes.updated.2019$s.genes
+g2m.genes <- cc.genes.updated.2019$g2m.genes
+
+# Asignar ciclo celular
+pbmc_annotated <- CellCycleScoring(pbmc_annotated,
+                               s.features = s.genes,
+                               g2m.features = g2m.genes,
+                               set.ident = TRUE)
+
+table(pbmc_annotated$orig.ident)
+```
+
+Esto añade columnas en `meta.data` con la fase asignada (`Phase`) y scores de S y G2M.
+
+3.  Visualizar resultados
+
+We can now create a violin plot for the cell cycle scores as well.
+
+```{r}
+VlnPlot(pbmc_annotated, features = c("S.Score", "G2M.Score"), group.by = "orig.ident", ncol = 2, pt.size = .1)
+```
+
+Finally, cell cycle score does not seem to depend on the cell type much - however, there are dramatic outliers in each group.
+
+```{r}
+FeaturePlot(pbmc_annotated, features = c("S.Score","G2M.Score"),label.size = 4,repel = T,label = T) & 
+  theme(plot.title = element_text(size=10))
+```
+
+We can then check the cell phase on the UMAP. In this dataset, phase isn’t driving the clustering, and would not require any further handling.
+
+```{r}
+DimPlot(pbmc_annotated, reduction = 'umap', group.by = "Phase")
+```
+
+Where a bias *is* present, your course of action depends on the task at hand. It might involve ‘regressing out’ the cell cycle variation when scaling data `ScaleData(kang, vars.to.regress="Phase")`, omitting cell-cycle dominated clusters, or just accounting for it in your differential expression calculations.
+
+If you are working with non-human data, you will need to convert these gene lists, or find new cell cycle associated genes in your species.
+
+In this case it looks like we only have a few cycling cells in these datasets.
+
+Seurat does an automatic prediction of cell cycle phase with a default cutoff of the scores at zero. As you can see this does not fit this data very well, so be cautious with using these predictions. Instead we suggest that you look at the scores.
+
+```{r}
+FeatureScatter(pbmc_annotated, "S.Score", "G2M.Score", group.by = "Phase")
+```
+
+4.  Decidir si corregir
+
+-   Si el ciclo celular domina la variabilidad, se puede regredir en `ScaleData`:
+
+```{r}
+seurat_obj <- ScaleData(pbmc_annotated, vars.to.regress = c("S.Score", "G2M.Score"))
+seurat_obj
+```
+
+-   Si es relevante biológicamente (ej. proliferación en tumores), se mantiene como variable de interés.
+
+## **Paso 6.** Expresión diferencial entre condiciones (type)
+
+1.  Cambio de identidad
+
+Estás definiendo que la identidad de las células (lo que Seurat usa para agrupar) sea la columna `"type"` del `meta.data`. Esto es importante porque `FindAllMarkers` usará esa identidad para comparar grupos.
+
+```{r}
+sub_cell_selection <- alldata
+sub_cell_selection <- SetIdent(sub_cell_selection, value = "type")
+```
+
+2.  Análisis de Expresión diferencial (ctrl vs covid)
+
+```{r}
+# Compute differentiall expression
+DGE_cell_selection <- FindAllMarkers(sub_cell_selection,
+    log2FC.threshold = 0.2,
+    test.use = "wilcox",
+    min.pct = 0.1,
+    min.diff.pct = 0.2,
+    only.pos = TRUE,
+    max.cells.per.ident = 50,
+    assay = "RNA"
+)
+head(DGE_cell_selection)
+```
+
+3.  Análisis de Expresión diferencial (células del Cluster 3)
+
+Si quiero ver la DEG en un solo cluster, por ejemplo en el Cluster 3:
+
+```{r}
+# Supongamos que tu identidad actual es "seurat_clusters"
+sub_cell_selection <- alldata
+Idents(sub_cell_selection) <- "seurat_clusters"
+
+# Comparar el cluster 3 contra todos los demás
+DEG_cluster3 <- FindMarkers(sub_cell_selection,
+    ident.1 = 3,
+    log2FC.threshold = 0.25,
+    test.use = "wilcox",
+    min.pct = 0.1,
+    min.diff.pct = 0.2,
+    only.pos = TRUE
+)
+
+head(DEG_cluster3)
+```
+
+## **Paso 7. Visualización de** Expresión diferencial entre condiciones (type)
+
+We can now plot the expression across the **type**.
+
+```{r}
+top5_cell_selection <- DGE_cell_selection %>%
+    group_by(cluster) %>%
+    top_n(-5, p_val) 
+
+VlnPlot(cell_selection, features = as.character(unique(top5_cell_selection$gene)), ncol = 5, group.by = "type", assay = "RNA", pt.size = .1)
+```
+
+We can also plot these genes across all clusters, but split by **type**, to check if the genes are also over/under expressed in other celltypes.
+
+```{r, warning=FALSE, message=FALSE}
+VlnPlot(alldata,
+    features = as.character(unique(top5_cell_selection$gene)),
+    ncol = 4, split.by = "type", assay = "RNA", pt.size = 0
+)
+```
+
+As you can see, we have many sex chromosome related genes among the top DE genes. And if you remember from the QC lab, we have unbalanced sex distribution among our subjects, so this may not be related to covid at all.
+
+## Paso 6. Pseudobulk (opcional)
+
+```{r}
+cell_selection <- SetIdent(cell_selection, value = "orig.ident")
+table(cell_selection$orig.ident)
+```
+
+```{r}
+# get the count matrix for all cells
+DGE_DATA <- GetAssayData(cell_selection, assay = "RNA", layer = "counts")
+# Compute pseudobulk
+mm <- Matrix::sparse.model.matrix(~ 0 + cell_selection$orig.ident)
+pseudobulk <- DGE_DATA %*% mm
+```
+
+```{r}
+# define the groups
+bulk.labels <- c("Covid", "Covid", "Covid", "Covid", "Ctrl", "Ctrl", "Ctrl")
+
+dge.list <- DGEList(counts = pseudobulk, group = factor(bulk.labels))
+keep <- filterByExpr(dge.list)
+dge.list <- dge.list[keep, , keep.lib.sizes = FALSE]
+
+dge.list <- calcNormFactors(dge.list)
+design <- model.matrix(~bulk.labels)
+
+dge.list <- estimateDisp(dge.list, design)
+
+fit <- glmQLFit(dge.list, design)
+qlf <- glmQLFTest(fit, coef = 2)
+topTags(qlf)
+```
+
+As you can see, we have very few significant genes. Since we only have 4 vs 4 samples, we should not expect to find many genes with this method.
+
+Again as dotplot including top 10 genes:
+
+```{r}
+res.edgeR <- topTags(qlf, 100)$table
+res.edgeR$dir <- ifelse(res.edgeR$logFC > 0, "Covid", "Ctrl")
+res.edgeR$gene <- rownames(res.edgeR)
+
+top.edgeR <- res.edgeR %>%
+    group_by(dir) %>%
+    top_n(-10, PValue) %>%
+    arrange(dir) top.edgeR
+
+DotPlot(cell_selection,
+    features = as.character(unique(top.edgeR$gene)), group.by = "orig.ident",
+    assay = "RNA"
+) + coord_flip() + ggtitle("EdgeR pseudobulk") + RotatedAxis()
+```
+
+As you can see, even if we find few genes, they seem to make sense across all the patients.
+
+## Paso 8. Predicción de Trayectorias
+
+## Paso 9. Guardar dataset
+
+```{r, eval=FALSE}
+saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
+```
+
+## **Referencias**
+
+-   [Información del dataset de GEO GSE149689](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
+-   [Más explicación de este dataset GSE149689](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/other/data.html)
+-   [SingleR + celldex + Seurat](https://swbioinf.github.io/scRNAseqInR_Doco/singler.html)
+-   [SingleR](https://swbioinf.github.io/scRNAseqInR_Doco/singler.html#singler)
+-   [Differential gene expression](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_05_dge.html)
+-   [Pseudobulk](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_05_dge.html#pseudobulk)
+-   NBS - [Celltype prediction](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_06_celltyping.html)
+-   [Cell cycle Assignment](https://swbioinf.github.io/scRNAseqInR_Doco/CellCycle.html#CellCycle)
+-   Sanger - [Cell type annotation using SingleR](https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#cell-type-annotation-using-singler)
+-   [Differential Expression](https://swbioinf.github.io/scRNAseqInR_Doco/de2.html#de2)
+-   [Análisis de expresión diferencial](https://comunidadbioinfo.github.io/cdsb2021_scRNAseq/an%C3%A1lisis-de-expresi%C3%B3n-diferencial.html)
+-   [Introducción a Seurat](https://comunidadbioinfo.github.io/cdsb2021_scRNAseq/introducci%C3%B3n-a-seurat.html)
