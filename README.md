@@ -54,12 +54,14 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 - Visualización del reporte final: [Practica3](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica3.html)
   + 🌟 Checkpoint: [pbmc3k_annotated.rds](https://drive.google.com/file/d/12SuvKiwChYNxuawaZH5UAhcDqx1IIspr/view?usp=drive_link)
   
-### Clase 5. Expresión diferencial por condiciones e Inferencia de trayectorias
+### Clase 5. Expresión diferencial por condiciones 
 
 - Fecha: 15/04/2026
-- Presentación: Clase 5
+- Descarga el archivo: [Practica4.qmd](https://github.com/EveliaCoss/Workshop_scRNAseq_presentacion/blob/main/practica/Practica4.qmd)
+- Visualización del reporte final: [Practica4](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/practica/Practica4.html)
+  + 🌟 Checkpoint: [variables_expression.RData](https://drive.google.com/file/d/11kZYI7w1FuwdmIKWJiu6throeKneovci/view?usp=sharing)
 
-### Clase 6. Comunicación celular (CellChat)
+### Clase 6. Inferencia de trayectorias y Comunicación celular (CellChat)
 
 - Fecha: 22/04/2026
 - Presentación: Clase 6
