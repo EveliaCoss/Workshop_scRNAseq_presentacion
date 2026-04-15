@@ -38,7 +38,7 @@ library(plotly) # figura interactiva
 options(rgl.printRglwidget = TRUE)
 library(sparseMatrixStats)
 library(slingshot) # BiocManager::install("slingshot")
-library(tradeSeq)
+library(tradeSeq) # BiocManager::install("tradeSeq")
 library(Matrix)
 ```
 
@@ -67,7 +67,7 @@ alldata <- SetIdent(pbmc_integrated, value = sel.clust)
 table(alldata@active.ident)
 ```
 
-## Paso 2. **Asignar identidad celular a los clusters (**`SingleR` **+** `celldex`**)** 
+## Paso 2. **Asignar identidad celular a los clusters (**`SingleR` **+** `celldex`**)**
 
 Ahora etiquetaremos nuestras células utilizando el objeto \`SingleCellExperiment\`, con la referencia establecida anteriormente.
 
@@ -347,7 +347,7 @@ top5_cell_selection <- DGE_cell_selection %>%
     group_by(cluster) %>%
     top_n(-5, p_val) 
 
-VlnPlot(cell_selection, features = as.character(unique(top5_cell_selection$gene)), ncol = 5, group.by = "type", assay = "RNA", pt.size = .1)
+VlnPlot(sub_cell_selection, features = as.character(unique(top5_cell_selection$gene)), ncol = 5, group.by = "type", assay = "RNA", pt.size = .1)
 ```
 
 We can also plot these genes across all clusters, but split by **type**, to check if the genes are also over/under expressed in other celltypes.
@@ -364,7 +364,7 @@ As you can see, we have many sex chromosome related genes among the top DE genes
 ## Paso 6. Pseudobulk (opcional)
 
 ```{r}
-cell_selection <- SetIdent(cell_selection, value = "orig.ident")
+cell_selection <- SetIdent(pbmc_annotated, value = "orig.ident")
 table(cell_selection$orig.ident)
 ```
 
@@ -378,7 +378,7 @@ pseudobulk <- DGE_DATA %*% mm
 
 ```{r}
 # define the groups
-bulk.labels <- c("Covid", "Covid", "Covid", "Covid", "Ctrl", "Ctrl", "Ctrl")
+bulk.labels <- c("Covid", "Covid", "Covid", "Covid", "Ctrl", "Ctrl", "Ctrl","Ctrl")
 
 dge.list <- DGEList(counts = pseudobulk, group = factor(bulk.labels))
 keep <- filterByExpr(dge.list)
@@ -404,9 +404,9 @@ res.edgeR$dir <- ifelse(res.edgeR$logFC > 0, "Covid", "Ctrl")
 res.edgeR$gene <- rownames(res.edgeR)
 
 top.edgeR <- res.edgeR %>%
-    group_by(dir) %>%
-    top_n(-10, PValue) %>%
-    arrange(dir) top.edgeR
+  group_by(dir) %>%
+  top_n(-10, PValue) %>%
+  arrange(dir) 
 
 DotPlot(cell_selection,
     features = as.character(unique(top.edgeR$gene)), group.by = "orig.ident",
@@ -416,12 +416,10 @@ DotPlot(cell_selection,
 
 As you can see, even if we find few genes, they seem to make sense across all the patients.
 
-## Paso 8. Predicción de Trayectorias
-
 ## Paso 9. Guardar dataset
 
 ```{r, eval=FALSE}
-saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
+save(dge.list, res.edgeR, cell_selection, file = "output/variables_expression.RData")
 ```
 
 ## **Referencias**
@@ -438,3 +436,4 @@ saveRDS(pbmc_annotated, file = "output/pbmc3k_annotated.rds")
 -   [Differential Expression](https://swbioinf.github.io/scRNAseqInR_Doco/de2.html#de2)
 -   [Análisis de expresión diferencial](https://comunidadbioinfo.github.io/cdsb2021_scRNAseq/an%C3%A1lisis-de-expresi%C3%B3n-diferencial.html)
 -   [Introducción a Seurat](https://comunidadbioinfo.github.io/cdsb2021_scRNAseq/introducci%C3%B3n-a-seurat.html)
+-   [Trajectory inference using Slingshot](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_07_trajectory.html)

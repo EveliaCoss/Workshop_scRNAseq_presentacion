@@ -297,14 +297,7 @@ No se hace en Seurat directamente, sino con paquetes como scVelo (Python) o velo
 .pull-right[
 ]
 
----
 
-## Comunicación celular (CellChat)
-
-- **Redes de interacción:** qué tipos celulares se comunican más intensamente.
-- **Ligando-receptor específicos:** qué moléculas median la comunicación.
-- **Comparación entre condiciones:** cómo cambia la red de comunicación en sano vs enfermo, tratado vs control.
-- **Direccionalidad funcional:** quién actúa como emisor y quién como receptor en un proceso biológico.
 
 ---
 
