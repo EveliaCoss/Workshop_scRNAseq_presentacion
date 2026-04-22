@@ -65,3 +65,17 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 
 - Fecha: 22/04/2026
 - Presentación: [Clase 6](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase5_DE_trayectoria.html)
+- Materiales suplementarios:
+  + [In-depth-NGS-Data-Analysis-Course](https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html)
+  + [Single Cell RNA-seq Analysis](https://nbisweden.github.io/workshop-scRNAseq/archive/2024/labs/seurat/seurat_01_qc.html)
+  + [Trajectory Analysis using 10x Genomics Single Cell Gene Expression Data](https://www.10xgenomics.com/analysis-guides/trajectory-analysis-using-10x-Genomics-single-cell-gene-expression-data)
+  + [Chapter 18 Trajectory Analysis](https://bioconductor.org/books/3.12/OSCA/trajectory-analysis.html)
+  + [Single-cell network biology for resolving cellular heterogeneity in human diseases](https://www.nature.com/articles/s12276-020-00528-0)
+  + [Trajectory inference using Slingshot](https://nbisweden.github.io/workshop-scRNAseq/labs/seurat/seurat_07_trajectory.html)
+  + [Differential expression testing](https://satijalab.org/seurat/articles/de_vignette)
+  + [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/articles/cell_cycle_vignette)  
+  + [Differential expression methods](https://nbisweden.github.io/excelerate-scRNAseq/session-de/session-de-methods.html)
+  + [Differential expression analysis](https://rnabio.org/module-08-scrna/0008/04/01/DE_analysis/)
+  + [Introduction to Single-cell RNA-seq - ARCHIVED](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html)
+  + [Trajectory inference analysis: Slingshot](https://nbisweden.github.io/workshop-archive/workshop-scRNAseq/2020-01-27/labs/compiled/slingshot/slingshot.html)
+  + [3_slingshot.md](https://github.com/NBISweden/single-cell_sib_scilifelab/blob/master/session-trajectories/3_slingshot.md)
