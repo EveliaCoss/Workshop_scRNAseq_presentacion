@@ -64,4 +64,4 @@ Les comparto el [plan de estudios](https://docs.google.com/spreadsheets/d/1E_V69
 ### Clase 6. Inferencia de trayectorias y Comunicación celular (CellChat)
 
 - Fecha: 22/04/2026
-- Presentación: Clase 6
+- Presentación: [Clase 6](https://eveliacoss.github.io/Workshop_scRNAseq_presentacion/Clase5_DE_trayectoria.html)

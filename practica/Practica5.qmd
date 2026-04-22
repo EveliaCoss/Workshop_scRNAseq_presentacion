@@ -4,6 +4,45 @@ format: html
 editor: visual
 ---
 
+## Descripción de los datos
+
+### Información general
+
+-   **Título del estudio:** Immunophenotyping of COVID-19 and Influenza Underscores the Association of Type I IFN Response in Severe COVID-19
+-   **Especie:** *Homo sapiens*
+-   **Número de acceso de la base de datos GEO (Gene Expression Omnibus):** [GSE149689](GSE149689)
+-   **Tipo de experimento:** scRNA-seq
+
+## Paso 1. Cargar paquetes y datasets en R
+
+### Cargar paquetes
+
+```{r paquetes, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(patchwork)
+# BiocManager::install(c("SingleCellExperiment","SingleR","celldex"),ask=F)
+library(viridis)
+library(Seurat)
+# Anotacion de tipos celulares
+library(SingleCellExperiment)
+library(SingleR)
+library(celldex)
+# Expresion diferencial
+library(edgeR)
+library(RColorBrewer)
+# Trayectoria
+library(plotly) # figura interactiva
+options(rgl.printRglwidget = TRUE)
+library(sparseMatrixStats)
+library(slingshot) # BiocManager::install("slingshot")
+library(tradeSeq) # BiocManager::install("tradeSeq")
+library(Matrix)
+```
+
+### Cargar el dataset de pbmc_integrated
+
+Objetos obtenidos de de la Practica 2.
+
 ```{r}
 devtools::install_github("jinworks/CellChat")
 library(CellChat)

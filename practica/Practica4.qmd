@@ -33,13 +33,6 @@ library(celldex)
 # Expresion diferencial
 library(edgeR)
 library(RColorBrewer)
-# Trayectoria
-library(plotly) # figura interactiva
-options(rgl.printRglwidget = TRUE)
-library(sparseMatrixStats)
-library(slingshot) # BiocManager::install("slingshot")
-library(tradeSeq) # BiocManager::install("tradeSeq")
-library(Matrix)
 ```
 
 ### Cargar el dataset de pbmc_integrated
@@ -72,10 +65,11 @@ table(alldata@active.ident)
 Ahora etiquetaremos nuestras células utilizando el objeto \`SingleCellExperiment\`, con la referencia establecida anteriormente.
 
 ```{r}
+# Etiquetas main
 pred_main <- SingleR::SingleR(test = sce, 
                               ref = ref.set, 
                               labels = ref.set$label.main)
-
+# Etiquetas fine
 pred_fine <- SingleR::SingleR(test = sce, 
                            ref = ref.set,
                            labels = ref.set$label.fine)
@@ -94,43 +88,54 @@ DimPlot(pbmc_annotated, reduction='umap', group.by='SingleR.labels')
 
 Es bueno ver que, aunque SingleR no utiliza los clústeres que calculamos anteriormente, las etiquetas parecen coincidir bastante bien con esos clústeres.
 
-How many cells have low confidence labels?
+¿Cuántas celdas tienen etiquetas de baja fiabilidad?
 
 ```{r}
 unique(pred_main$pruned.labels)
 ```
 
+¿Cuántas células hay en cada etiqueta original?
+
 ```{r}
-# Opción A
-table(pred_main$pruned.labels)
+table(pred_main$labels)
 ```
+
+¿Cuántas células quedaron en cada etiqueta después de la depuración?
 
 ```{r}
 # Opción B
-table(pred_main$labels)
+table(pred_main$pruned.labels)
 ```
+
+Resume ese vector lógico, mostrando cuántos valores son `TRUE` (es decir, cuántos `NA` hay) y cuántos son `FALSE` (no faltantes).
 
 ```{r}
 summary(is.na(pred_main$pruned.labels))
 ```
 
-Are there more or less pruned labels for the fine labels?
+¿Hay más o menos etiquetas recortadas en el caso de las etiquetas de alta calidad?
 
 ```{r}
 summary(is.na(pred_fine$pruned.labels))
 ```
 
-Now that we understand what the singleR dataframe looks like and what the data contains, let’s begin to visualize the data.
+Ahora que sabemos cómo es el marco de datos «singleR» y qué datos contiene, empecemos a visualizarlos.
+
+## Paso 3. Visualización de los datos
+
+Vamos a **visualizar la distribución de los valores “delta” asociados a las predicciones de etiquetas** en tu objeto `pred_main`.
 
 ```{r, warning=FALSE, message=FALSE}
 plotDeltaDistribution(pred_main, ncol = 4, dots.on.top = FALSE)
 ```
 
+Ahora vamos a generar un **heatmap (mapa de calor)** que muestre las **probabilidades o scores de clasificación** que el modelo asignó a cada célula respecto a las posibles etiquetas.
+
 ```{r}
 plotScoreHeatmap(pred_main)
 ```
 
-Rather than only working with the singleR dataframe, we can add the labels to our Seurat data object as a metadata field, so let’s add the cell type labels to our seurat object.
+En lugar de trabajar únicamente con el marco de datos \`singleR\`, podemos añadir las etiquetas a nuestro objeto de datos Seurat como un campo de metadatos; así pues, añadamos las etiquetas de tipo celular a nuestro objeto Seurat.
 
 ```{r}
 #add main labels to object
@@ -142,34 +147,35 @@ pbmc_annotated[['immgen_singler_fine']] = rep('NA', ncol(pbmc_annotated))
 pbmc_annotated$immgen_singler_fine[rownames(pred_fine)] = pred_fine$labels
 ```
 
-Comparing the labels obtained from the three sources, we can see many interesting discrepancies. Sorthing those out requires manual curation. However, many informative assignments can be seen. For example, small cluster 17 is repeatedly identified as plasma B cells. This distinct subpopulation displays markers such as CD38 and CD59.
+Al comparar las etiquetas obtenidas de las tres fuentes, se observan numerosas discrepancias interesantes. Resolverlas requiere una revisión manual. Sin embargo, se pueden apreciar muchas clasificaciones reveladoras. Por ejemplo, el pequeño grupo 17 se identifica repetidamente como células B plasmáticas. Esta subpoblación distintiva presenta marcadores como CD38 y CD59.
 
 ```{r, warning=FALSE, message=FALSE}
 FeaturePlot(pbmc_annotated, "CD38") + scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "Spectral")))
 ```
 
-Similarly, cluster 13 is identified to be MAIT cells. Literature suggests that blood MAIT cells are characterized by high expression of CD161 (KLRB1), and chemokines like CXCR6. This indeed seems to be the case; however, this cell type is harder to evaluate.
+Del mismo modo, se ha identificado que el grupo 13 corresponde a las células MAIT. La bibliografía sugiere que las células MAIT sanguíneas se caracterizan por una elevada expresión de CD161 (KLRB1) y de quimiocinas como CXCR6. De hecho, esto parece ser así; sin embargo, este tipo de células es más difícil de evaluar.
 
 ```{r, warning=FALSE, message=FALSE}
 FeaturePlot(pbmc_annotated, "KLRB1") + scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "Spectral")))
 ```
 
-## Paso 3. Guardar dataset
+## Paso 4. Guardar dataset
 
 ```{r, eval=FALSE}
 saveRDS(pbmc_annotated, file = "output/pbmc3k_singler_annotated.rds")
 ```
 
-## **Paso 4. Visualización de los datos**
+## **Paso 5. Visualización de los datos**
+
+Vamos a ver las proporciones obtenidas de los tipos celulares y las muestras procesadas:
 
 ```{r}
-#visualizing the relative proportion of cell types across our samples
 ggplot(pbmc_annotated[[]], aes(x = orig.ident, fill = immgen_singler_main)) + 
   geom_bar(position = "fill") + 
   scale_fill_viridis(discrete = TRUE)
 ```
 
-We can also flip the samples and cell labels and view this data as below.
+También podemos invertir las muestras y las etiquetas de las celdas y visualizar estos datos como se muestra a continuación.
 
 ```{r}
 ggplot(pbmc_annotated[[]], aes(x = immgen_singler_main, fill = orig.ident)) + 
@@ -178,6 +184,8 @@ ggplot(pbmc_annotated[[]], aes(x = immgen_singler_main, fill = orig.ident)) +
   scale_fill_viridis(discrete = TRUE)
 ```
 
+El siguiente código muestra la **composición proporcional de muestras (**`orig.ident`**) dentro de cada tipo celular anotado (**`immgen_singler_fine`**)**.
+
 ```{r}
 ggplot(pbmc_annotated[[]], aes(x = immgen_singler_fine, fill = orig.ident)) + 
   geom_bar(position = "fill") + 
@@ -185,7 +193,7 @@ ggplot(pbmc_annotated[[]], aes(x = immgen_singler_fine, fill = orig.ident)) +
   scale_fill_viridis(discrete = TRUE) 
 ```
 
-How do our cell type annotations map to our clusters we defined previously?
+¿Cómo se corresponden nuestras anotaciones de tipos celulares con los grupos que definimos anteriormente?
 
 ```{r}
 wrap_plots(
@@ -219,7 +227,7 @@ DimPlot(pbmc_annotated.celltype) +
   NoAxes()
 ```
 
-## **Paso 5. Control del Ciclo celular**
+## **Paso 6. Control del Ciclo celular**
 
 [![](images/cell_cycle.png)](https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html)
 
@@ -247,32 +255,32 @@ Esto añade columnas en `meta.data` con la fase asignada (`Phase`) y scores de S
 
 3.  Visualizar resultados
 
-We can now create a violin plot for the cell cycle scores as well.
+Ahora también podemos crear un gráfico de violín para las puntuaciones del ciclo celular.
 
 ```{r}
 VlnPlot(pbmc_annotated, features = c("S.Score", "G2M.Score"), group.by = "orig.ident", ncol = 2, pt.size = .1)
 ```
 
-Finally, cell cycle score does not seem to depend on the cell type much - however, there are dramatic outliers in each group.
+Por último, la puntuación del ciclo celular no parece depender en gran medida del tipo de célula; sin embargo, hay valores atípicos muy marcados en cada grupo.
 
 ```{r}
 FeaturePlot(pbmc_annotated, features = c("S.Score","G2M.Score"),label.size = 4,repel = T,label = T) & 
   theme(plot.title = element_text(size=10))
 ```
 
-We can then check the cell phase on the UMAP. In this dataset, phase isn’t driving the clustering, and would not require any further handling.
+A continuación, podemos comprobar la fase celular en el UMAP. En este conjunto de datos, la fase no influye en la agrupación de clústeres, por lo que no requiere ningún tratamiento adicional.
 
 ```{r}
 DimPlot(pbmc_annotated, reduction = 'umap', group.by = "Phase")
 ```
 
-Where a bias *is* present, your course of action depends on the task at hand. It might involve ‘regressing out’ the cell cycle variation when scaling data `ScaleData(kang, vars.to.regress="Phase")`, omitting cell-cycle dominated clusters, or just accounting for it in your differential expression calculations.
+Cuando existe un sesgo, el procedimiento a seguir depende de la tarea en cuestión. Podría implicar «eliminar mediante regresión» la variación del ciclo celular al escalar los datos con `ScaleData(kang, vars.to.regress="Phase")` omitir los clústeres dominados por el ciclo celular o simplemente tenerlo en cuenta en los cálculos de expresión diferencial.
 
-If you are working with non-human data, you will need to convert these gene lists, or find new cell cycle associated genes in your species.
+Si estás trabajando con datos no humanos, tendrás que convertir estas listas de genes o encontrar nuevos genes asociados al ciclo celular en tu especie.
 
-In this case it looks like we only have a few cycling cells in these datasets.
+En este caso, parece que solo tenemos unas pocas células en ciclo en estos conjuntos de datos.
 
-Seurat does an automatic prediction of cell cycle phase with a default cutoff of the scores at zero. As you can see this does not fit this data very well, so be cautious with using these predictions. Instead we suggest that you look at the scores.
+Seurat realiza una predicción automática de la fase del ciclo celular con un umbral predeterminado de las puntuaciones en cero. Como puedes ver, esto no se ajusta muy bien a estos datos, así que ten cuidado al utilizar estas predicciones. En su lugar, te sugerimos que te fijes en las puntuaciones.
 
 ```{r}
 FeatureScatter(pbmc_annotated, "S.Score", "G2M.Score", group.by = "Phase")
@@ -289,7 +297,7 @@ seurat_obj
 
 -   Si es relevante biológicamente (ej. proliferación en tumores), se mantiene como variable de interés.
 
-## **Paso 6.** Expresión diferencial entre condiciones (type)
+## **Paso 7.** Expresión diferencial entre condiciones (type)
 
 1.  Cambio de identidad
 
@@ -338,9 +346,9 @@ DEG_cluster3 <- FindMarkers(sub_cell_selection,
 head(DEG_cluster3)
 ```
 
-## **Paso 7. Visualización de** Expresión diferencial entre condiciones (type)
+## **Paso 8. Visualización de** Expresión diferencial entre condiciones (type)
 
-We can now plot the expression across the **type**.
+Ahora podemos representar gráficamente la expresión en todo el tipo.
 
 ```{r}
 top5_cell_selection <- DGE_cell_selection %>%
@@ -350,7 +358,7 @@ top5_cell_selection <- DGE_cell_selection %>%
 VlnPlot(sub_cell_selection, features = as.character(unique(top5_cell_selection$gene)), ncol = 5, group.by = "type", assay = "RNA", pt.size = .1)
 ```
 
-We can also plot these genes across all clusters, but split by **type**, to check if the genes are also over/under expressed in other celltypes.
+También podemos representar gráficamente estos genes en todos los clústeres, pero desglosados por tipo, para comprobar si los genes también se sobreexpresan o se subexpresan en otros tipos celulares.
 
 ```{r, warning=FALSE, message=FALSE}
 VlnPlot(alldata,
@@ -359,9 +367,9 @@ VlnPlot(alldata,
 )
 ```
 
-As you can see, we have many sex chromosome related genes among the top DE genes. And if you remember from the QC lab, we have unbalanced sex distribution among our subjects, so this may not be related to covid at all.
+Como puedes ver, entre los genes con mayor expresión diferencial (DE) hay muchos relacionados con los cromosomas sexuales. Y, como recordarás del laboratorio de control de calidad, la distribución por sexos entre nuestros sujetos es desequilibrada, por lo que es posible que esto no tenga nada que ver con la COVID.
 
-## Paso 8. Pseudobulk
+## Paso 9. Pseudobulk con matriz generada
 
 ```{r}
 cell_selection <- SetIdent(pbmc_annotated, value = "orig.ident")
@@ -395,9 +403,9 @@ qlf <- glmQLFTest(fit, coef = 2)
 topTags(qlf)
 ```
 
-As you can see, we have very few significant genes. Since we only have 4 vs 4 samples, we should not expect to find many genes with this method.
+Como se puede ver, tenemos muy pocos genes significativos. Dado que solo contamos con 4 muestras contra 4, no es de esperar que encontremos muchos genes con este método.
 
-Again as dotplot including top 10 genes:
+De nuevo, en forma de gráfico de puntos con los 10 genes principales:
 
 ```{r}
 res.edgeR <- topTags(qlf, 100)$table
@@ -415,7 +423,9 @@ DotPlot(cell_selection,
 ) + coord_flip() + ggtitle("EdgeR pseudobulk") + RotatedAxis()
 ```
 
-As you can see, even if we find few genes, they seem to make sense across all the patients.
+## Paso 10. Pseudobulk con seurat
+
+Como se puede ver, aunque encontremos pocos genes, parecen tener sentido en todos los pacientes.
 
 ```{r}
 # Pseudobulking con Seurat
@@ -430,14 +440,15 @@ pseudo_data$celltype.type <- paste(pseudo_data$immgen_singler_main, pseudo_data$
 pseudo_data$celltype.type
 ```
 
-Next, we perform DE testing on the pseudobulk level for CD14 monocytes, and compare it against the previous single-cell-level DE results.
+A continuación, realizamos un análisis de expresión diferencial a nivel de pseudogrupo para los monocitos CD14 y lo comparamos con los resultados anteriores del análisis de expresión diferencial a nivel de célula individual.
 
-```{r}
+```{r, eval=FALSE}
+# Este codigo me falla y es por la cantidad tan pequeña de celulas
 Idents(pseudo_data) <- "celltype.type"
 
 bulk.mono.de <- FindMarkers(object = pseudo_data, 
-                         ident.1 = "CD14 Monocyte_Ctrl", 
-                         ident.2 = "CD14 Monocyte_Covid",
+                         ident.1 = "NK-cell_Ctrl", 
+                         ident.2 = "NK-cell_Covid",
                          test.use = "DESeq2")
 head(bulk.mono.de, n = 15)
 ```

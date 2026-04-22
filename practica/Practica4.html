@@ -141,14 +141,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(celldex)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Expresion diferencial</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(edgeR)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># trayetcoria</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly) <span class="co"># figura interactiva</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">rgl.printRglwidget =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sparseMatrixStats)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(slingshot) <span class="co"># BiocManager::install("slingshot")</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tradeSeq) <span class="co"># BiocManager::install("tradeSeq")</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="cargar-el-dataset-de-pbmc_integrated" class="level3">
@@ -185,13 +178,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="paso-2.-asignar-identidad-celular-a-los-clusters-singler-celldex">Paso 2. <strong>Asignar identidad celular a los clusters (</strong><code>SingleR</code> <strong>+</strong> <code>celldex</code><strong>)</strong></h2>
 <p>Ahora etiquetaremos nuestras células utilizando el objeto `SingleCellExperiment`, con la referencia establecida anteriormente.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pred_main <span class="ot">&lt;-</span> SingleR<span class="sc">::</span><span class="fu">SingleR</span>(<span class="at">test =</span> sce, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">ref =</span> ref.set, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">labels =</span> ref.set<span class="sc">$</span>label.main)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>pred_fine <span class="ot">&lt;-</span> SingleR<span class="sc">::</span><span class="fu">SingleR</span>(<span class="at">test =</span> sce, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">ref =</span> ref.set,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> ref.set<span class="sc">$</span>label.fine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Etiquetas main</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pred_main <span class="ot">&lt;-</span> SingleR<span class="sc">::</span><span class="fu">SingleR</span>(<span class="at">test =</span> sce, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">ref =</span> ref.set, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">labels =</span> ref.set<span class="sc">$</span>label.main)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Etiquetas fine</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pred_fine <span class="ot">&lt;-</span> SingleR<span class="sc">::</span><span class="fu">SingleR</span>(<span class="at">test =</span> sce, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">ref =</span> ref.set,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> ref.set<span class="sc">$</span>label.fine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Conserva los tipos que tengan más de 10 celdas en la etiqueta, vuelve a asignar esas etiquetas a nuestro objeto Seurat y visualízalas en nuestro umap.</p>
 <div class="cell">
@@ -210,7 +204,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Es bueno ver que, aunque SingleR no utiliza los clústeres que calculamos anteriormente, las etiquetas parecen coincidir bastante bien con esos clústeres.</p>
-<p>How many cells have low confidence labels?</p>
+<p>¿Cuántas celdas tienen etiquetas de baja fiabilidad?</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(pred_main<span class="sc">$</span>pruned.labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -220,24 +214,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [13] "B_cell"           "Macrophage"      </code></pre>
 </div>
 </div>
+<p>¿Cuántas células hay en cada etiqueta original?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opción A</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_main<span class="sc">$</span>pruned.labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-          B_cell               BM              CMP     Erythroblast 
-              14               86                3               64 
-      HSC_-G-CSF       Macrophage         Monocyte      Neutrophils 
-              37                1              645              120 
-         NK_cell        Platelets Pre-B_cell_CD34- Pro-B_cell_CD34+ 
-             638              707               19                1 
-         T_cells 
-              95 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opción B</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_main<span class="sc">$</span>labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_main<span class="sc">$</span>labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
           B_cell               BM              CMP     Erythroblast 
@@ -250,6 +229,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
              102 </code></pre>
 </div>
 </div>
+<p>¿Cuántas células quedaron en cada etiqueta después de la depuración?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opción B</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_main<span class="sc">$</span>pruned.labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+          B_cell               BM              CMP     Erythroblast 
+              14               86                3               64 
+      HSC_-G-CSF       Macrophage         Monocyte      Neutrophils 
+              37                1              645              120 
+         NK_cell        Platelets Pre-B_cell_CD34- Pro-B_cell_CD34+ 
+             638              707               19                1 
+         T_cells 
+              95 </code></pre>
+</div>
+</div>
+<p>Resume ese vector lógico, mostrando cuántos valores son <code>TRUE</code> (es decir, cuántos <code>NA</code> hay) y cuántos son <code>FALSE</code> (no faltantes).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">is.na</span>(pred_main<span class="sc">$</span>pruned.labels))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -257,7 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 logical    2430     118 </code></pre>
 </div>
 </div>
-<p>Are there more or less pruned labels for the fine labels?</p>
+<p>¿Hay más o menos etiquetas recortadas en el caso de las etiquetas de alta calidad?</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">is.na</span>(pred_fine<span class="sc">$</span>pruned.labels))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -265,7 +261,11 @@ logical    2430     118 </code></pre>
 logical    2448     100 </code></pre>
 </div>
 </div>
-<p>Now that we understand what the singleR dataframe looks like and what the data contains, let’s begin to visualize the data.</p>
+<p>Ahora que sabemos cómo es el marco de datos «singleR» y qué datos contiene, empecemos a visualizarlos.</p>
+</section>
+<section id="paso-3.-visualización-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="paso-3.-visualización-de-los-datos">Paso 3. Visualización de los datos</h2>
+<p>Vamos a <strong>visualizar la distribución de los valores “delta” asociados a las predicciones de etiquetas</strong> en tu objeto <code>pred_main</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotDeltaDistribution</span>(pred_main, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">dots.on.top =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -276,6 +276,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
+<p>Ahora vamos a generar un <strong>heatmap (mapa de calor)</strong> que muestre las <strong>probabilidades o scores de clasificación</strong> que el modelo asignó a cada célula respecto a las posibles etiquetas.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScoreHeatmap</span>(pred_main)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -286,7 +287,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>Rather than only working with the singleR dataframe, we can add the labels to our Seurat data object as a metadata field, so let’s add the cell type labels to our seurat object.</p>
+<p>En lugar de trabajar únicamente con el marco de datos `singleR`, podemos añadir las etiquetas a nuestro objeto de datos Seurat como un campo de metadatos; así pues, añadamos las etiquetas de tipo celular a nuestro objeto Seurat.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#add main labels to object</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>pbmc_annotated[[<span class="st">'immgen_singler_main'</span>]] <span class="ot">=</span> <span class="fu">rep</span>(<span class="st">'NA'</span>, <span class="fu">ncol</span>(pbmc_annotated))</span>
@@ -296,7 +297,7 @@ logical    2448     100 </code></pre>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>pbmc_annotated[[<span class="st">'immgen_singler_fine'</span>]] <span class="ot">=</span> <span class="fu">rep</span>(<span class="st">'NA'</span>, <span class="fu">ncol</span>(pbmc_annotated))</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>pbmc_annotated<span class="sc">$</span>immgen_singler_fine[<span class="fu">rownames</span>(pred_fine)] <span class="ot">=</span> pred_fine<span class="sc">$</span>labels</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Comparing the labels obtained from the three sources, we can see many interesting discrepancies. Sorthing those out requires manual curation. However, many informative assignments can be seen. For example, small cluster 17 is repeatedly identified as plasma B cells. This distinct subpopulation displays markers such as CD38 and CD59.</p>
+<p>Al comparar las etiquetas obtenidas de las tres fuentes, se observan numerosas discrepancias interesantes. Resolverlas requiere una revisión manual. Sin embargo, se pueden apreciar muchas clasificaciones reveladoras. Por ejemplo, el pequeño grupo 17 se identifica repetidamente como células B plasmáticas. Esta subpoblación distintiva presenta marcadores como CD38 y CD59.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(pbmc_annotated, <span class="st">"CD38"</span>) <span class="sc">+</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="at">n =</span> <span class="dv">11</span>, <span class="at">name =</span> <span class="st">"Spectral"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -307,7 +308,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>Similarly, cluster 13 is identified to be MAIT cells. Literature suggests that blood MAIT cells are characterized by high expression of CD161 (KLRB1), and chemokines like CXCR6. This indeed seems to be the case; however, this cell type is harder to evaluate.</p>
+<p>Del mismo modo, se ha identificado que el grupo 13 corresponde a las células MAIT. La bibliografía sugiere que las células MAIT sanguíneas se caracterizan por una elevada expresión de CD161 (KLRB1) y de quimiocinas como CXCR6. De hecho, esto parece ser así; sin embargo, este tipo de células es más difícil de evaluar.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(pbmc_annotated, <span class="st">"KLRB1"</span>) <span class="sc">+</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="at">n =</span> <span class="dv">11</span>, <span class="at">name =</span> <span class="st">"Spectral"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -319,19 +320,19 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </section>
-<section id="paso-3.-guardar-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="paso-3.-guardar-dataset">Paso 3. Guardar dataset</h2>
+<section id="paso-4.-guardar-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="paso-4.-guardar-dataset">Paso 4. Guardar dataset</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pbmc_annotated, <span class="at">file =</span> <span class="st">"output/pbmc3k_singler_annotated.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="paso-4.-visualización-de-los-datos" class="level2">
-<h2 class="anchored" data-anchor-id="paso-4.-visualización-de-los-datos"><strong>Paso 4. Visualización de los datos</strong></h2>
+<section id="paso-5.-visualización-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="paso-5.-visualización-de-los-datos"><strong>Paso 5. Visualización de los datos</strong></h2>
+<p>Vamos a ver las proporciones obtenidas de los tipos celulares y las muestras procesadas:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the relative proportion of cell types across our samples</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pbmc_annotated[[]], <span class="fu">aes</span>(<span class="at">x =</span> orig.ident, <span class="at">fill =</span> immgen_singler_main)) <span class="sc">+</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>(<span class="at">discrete =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pbmc_annotated[[]], <span class="fu">aes</span>(<span class="at">x =</span> orig.ident, <span class="at">fill =</span> immgen_singler_main)) <span class="sc">+</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>(<span class="at">discrete =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -340,7 +341,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>We can also flip the samples and cell labels and view this data as below.</p>
+<p>También podemos invertir las muestras y las etiquetas de las celdas y visualizar estos datos como se muestra a continuación.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pbmc_annotated[[]], <span class="fu">aes</span>(<span class="at">x =</span> immgen_singler_main, <span class="at">fill =</span> orig.ident)) <span class="sc">+</span> </span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span> </span>
@@ -354,6 +355,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
+<p>El siguiente código muestra la <strong>composición proporcional de muestras (</strong><code>orig.ident</code><strong>) dentro de cada tipo celular anotado (</strong><code>immgen_singler_fine</code><strong>)</strong>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pbmc_annotated[[]], <span class="fu">aes</span>(<span class="at">x =</span> immgen_singler_fine, <span class="at">fill =</span> orig.ident)) <span class="sc">+</span> </span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span> </span>
@@ -367,7 +369,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>How do our cell type annotations map to our clusters we defined previously?</p>
+<p>¿Cómo se corresponden nuestras anotaciones de tipos celulares con los grupos que definimos anteriormente?</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># main</span></span>
@@ -416,8 +418,8 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </section>
-<section id="paso-5.-ciclo-celular" class="level2">
-<h2 class="anchored" data-anchor-id="paso-5.-ciclo-celular"><strong>Paso 5. Ciclo celular</strong></h2>
+<section id="paso-6.-control-del-ciclo-celular" class="level2">
+<h2 class="anchored" data-anchor-id="paso-6.-control-del-ciclo-celular"><strong>Paso 6. Control del Ciclo celular</strong></h2>
 <p><a href="https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html"><img src="images/cell_cycle.png" class="img-fluid"></a></p>
 <ol type="1">
 <li>Listas de genes de ciclo celular</li>
@@ -450,7 +452,7 @@ logical    2448     100 </code></pre>
 <ol start="3" type="1">
 <li>Visualizar resultados</li>
 </ol>
-<p>We can now create a violin plot for the cell cycle scores as well.</p>
+<p>Ahora también podemos crear un gráfico de violín para las puntuaciones del ciclo celular.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(pbmc_annotated, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"S.Score"</span>, <span class="st">"G2M.Score"</span>), <span class="at">group.by =</span> <span class="st">"orig.ident"</span>, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">pt.size =</span> .<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -461,7 +463,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>Finally, cell cycle score does not seem to depend on the cell type much - however, there are dramatic outliers in each group.</p>
+<p>Por último, la puntuación del ciclo celular no parece depender en gran medida del tipo de célula; sin embargo, hay valores atípicos muy marcados en cada grupo.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(pbmc_annotated, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"S.Score"</span>,<span class="st">"G2M.Score"</span>),<span class="at">label.size =</span> <span class="dv">4</span>,<span class="at">repel =</span> T,<span class="at">label =</span> T) <span class="sc">&amp;</span> </span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -473,7 +475,7 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>We can then check the cell phase on the UMAP. In this dataset, phase isn’t driving the clustering, and would not require any further handling.</p>
+<p>A continuación, podemos comprobar la fase celular en el UMAP. En este conjunto de datos, la fase no influye en la agrupación de clústeres, por lo que no requiere ningún tratamiento adicional.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(pbmc_annotated, <span class="at">reduction =</span> <span class="st">'umap'</span>, <span class="at">group.by =</span> <span class="st">"Phase"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -484,10 +486,10 @@ logical    2448     100 </code></pre>
 </div>
 </div>
 </div>
-<p>Where a bias <em>is</em> present, your course of action depends on the task at hand. It might involve ‘regressing out’ the cell cycle variation when scaling data <code>ScaleData(kang, vars.to.regress="Phase")</code>, omitting cell-cycle dominated clusters, or just accounting for it in your differential expression calculations.</p>
-<p>If you are working with non-human data, you will need to convert these gene lists, or find new cell cycle associated genes in your species.</p>
-<p>In this case it looks like we only have a few cycling cells in these datasets.</p>
-<p>Seurat does an automatic prediction of cell cycle phase with a default cutoff of the scores at zero. As you can see this does not fit this data very well, so be cautious with using these predictions. Instead we suggest that you look at the scores.</p>
+<p>Cuando existe un sesgo, el procedimiento a seguir depende de la tarea en cuestión. Podría implicar «eliminar mediante regresión» la variación del ciclo celular al escalar los datos con <code>ScaleData(kang, vars.to.regress="Phase")</code> omitir los clústeres dominados por el ciclo celular o simplemente tenerlo en cuenta en los cálculos de expresión diferencial.</p>
+<p>Si estás trabajando con datos no humanos, tendrás que convertir estas listas de genes o encontrar nuevos genes asociados al ciclo celular en tu especie.</p>
+<p>En este caso, parece que solo tenemos unas pocas células en ciclo en estos conjuntos de datos.</p>
+<p>Seurat realiza una predicción automática de la fase del ciclo celular con un umbral predeterminado de las puntuaciones en cero. Como puedes ver, esto no se ajusta muy bien a estos datos, así que ten cuidado al utilizar estas predicciones. En su lugar, te sugerimos que te fijes en las puntuaciones.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeatureScatter</span>(pbmc_annotated, <span class="st">"S.Score"</span>, <span class="st">"G2M.Score"</span>, <span class="at">group.by =</span> <span class="st">"Phase"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -525,8 +527,8 @@ Active assay: RNA (33538 features, 2000 variable features)
 <li>Si es relevante biológicamente (ej. proliferación en tumores), se mantiene como variable de interés.</li>
 </ul>
 </section>
-<section id="paso-6.-expresión-diferencial-entre-condiciones-type" class="level2">
-<h2 class="anchored" data-anchor-id="paso-6.-expresión-diferencial-entre-condiciones-type"><strong>Paso 6.</strong> Expresión diferencial entre condiciones (type)</h2>
+<section id="paso-7.-expresión-diferencial-entre-condiciones-type" class="level2">
+<h2 class="anchored" data-anchor-id="paso-7.-expresión-diferencial-entre-condiciones-type"><strong>Paso 7.</strong> Expresión diferencial entre condiciones (type)</h2>
 <ol type="1">
 <li>Cambio de identidad</li>
 </ol>
@@ -597,9 +599,9 @@ HIST1H2AC 3.576061e-196   3.458317 0.963 0.268 1.199339e-191</code></pre>
 </div>
 </div>
 </section>
-<section id="paso-7.-visualización-de-expresión-diferencial-entre-condiciones-type" class="level2">
-<h2 class="anchored" data-anchor-id="paso-7.-visualización-de-expresión-diferencial-entre-condiciones-type"><strong>Paso 7. Visualización de</strong> Expresión diferencial entre condiciones (type)</h2>
-<p>We can now plot the expression across the <strong>type</strong>.</p>
+<section id="paso-8.-visualización-de-expresión-diferencial-entre-condiciones-type" class="level2">
+<h2 class="anchored" data-anchor-id="paso-8.-visualización-de-expresión-diferencial-entre-condiciones-type"><strong>Paso 8. Visualización de</strong> Expresión diferencial entre condiciones (type)</h2>
+<p>Ahora podemos representar gráficamente la expresión en todo el tipo.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>top5_cell_selection <span class="ot">&lt;-</span> DGE_cell_selection <span class="sc">%&gt;%</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span></span>
@@ -614,7 +616,7 @@ HIST1H2AC 3.576061e-196   3.458317 0.963 0.268 1.199339e-191</code></pre>
 </div>
 </div>
 </div>
-<p>We can also plot these genes across all clusters, but split by <strong>type</strong>, to check if the genes are also over/under expressed in other celltypes.</p>
+<p>También podemos representar gráficamente estos genes en todos los clústeres, pero desglosados por tipo, para comprobar si los genes también se sobreexpresan o se subexpresan en otros tipos celulares.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(alldata,</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">features =</span> <span class="fu">as.character</span>(<span class="fu">unique</span>(top5_cell_selection<span class="sc">$</span>gene)),</span>
@@ -628,10 +630,10 @@ HIST1H2AC 3.576061e-196   3.458317 0.963 0.268 1.199339e-191</code></pre>
 </div>
 </div>
 </div>
-<p>As you can see, we have many sex chromosome related genes among the top DE genes. And if you remember from the QC lab, we have unbalanced sex distribution among our subjects, so this may not be related to covid at all.</p>
+<p>Como puedes ver, entre los genes con mayor expresión diferencial (DE) hay muchos relacionados con los cromosomas sexuales. Y, como recordarás del laboratorio de control de calidad, la distribución por sexos entre nuestros sujetos es desequilibrada, por lo que es posible que esto no tenga nada que ver con la COVID.</p>
 </section>
-<section id="paso-6.-pseudobulk-opcional" class="level2">
-<h2 class="anchored" data-anchor-id="paso-6.-pseudobulk-opcional">Paso 6. Pseudobulk (opcional)</h2>
+<section id="paso-9.-pseudobulk-con-matriz-generada" class="level2">
+<h2 class="anchored" data-anchor-id="paso-9.-pseudobulk-con-matriz-generada">Paso 9. Pseudobulk con matriz generada</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>cell_selection <span class="ot">&lt;-</span> <span class="fu">SetIdent</span>(pbmc_annotated, <span class="at">value =</span> <span class="st">"orig.ident"</span>)</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(cell_selection<span class="sc">$</span>orig.ident)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -644,9 +646,10 @@ HIST1H2AC 3.576061e-196   3.458317 0.963 0.268 1.199339e-191</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the count matrix for all cells</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>DGE_DATA <span class="ot">&lt;-</span> <span class="fu">GetAssayData</span>(cell_selection, <span class="at">assay =</span> <span class="st">"RNA"</span>, <span class="at">layer =</span> <span class="st">"counts"</span>)</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute pseudobulk</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>mm <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">sparse.model.matrix</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> cell_selection<span class="sc">$</span>orig.ident)</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>pseudobulk <span class="ot">&lt;-</span> DGE_DATA <span class="sc">%*%</span> mm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute pseudobulk</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>mm <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">sparse.model.matrix</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> cell_selection<span class="sc">$</span>orig.ident)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>pseudobulk <span class="ot">&lt;-</span> DGE_DATA <span class="sc">%*%</span> mm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the groups</span></span>
@@ -679,8 +682,8 @@ PLBD1   -2.873686  8.054313 61.48260 1.131561e-05 0.008095002
 MCEMP1  -3.431476  6.055396 60.77150 1.234736e-05 0.008095002</code></pre>
 </div>
 </div>
-<p>As you can see, we have very few significant genes. Since we only have 4 vs 4 samples, we should not expect to find many genes with this method.</p>
-<p>Again as dotplot including top 10 genes:</p>
+<p>Como se puede ver, tenemos muy pocos genes significativos. Dado que solo contamos con 4 muestras contra 4, no es de esperar que encontremos muchos genes con este método.</p>
+<p>De nuevo, en forma de gráfico de puntos con los 10 genes principales:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>res.edgeR <span class="ot">&lt;-</span> <span class="fu">topTags</span>(qlf, <span class="dv">100</span>)<span class="sc">$</span>table</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>res.edgeR<span class="sc">$</span>dir <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res.edgeR<span class="sc">$</span>logFC <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"Covid"</span>, <span class="st">"Ctrl"</span>)</span>
@@ -703,12 +706,64 @@ MCEMP1  -3.431476  6.055396 60.77150 1.234736e-05 0.008095002</code></pre>
 </div>
 </div>
 </div>
-<p>As you can see, even if we find few genes, they seem to make sense across all the patients.</p>
+</section>
+<section id="paso-10.-pseudobulk-con-seurat" class="level2">
+<h2 class="anchored" data-anchor-id="paso-10.-pseudobulk-con-seurat">Paso 10. Pseudobulk con seurat</h2>
+<p>Como se puede ver, aunque encontremos pocos genes, parecen tener sentido en todos los pacientes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudobulking con Seurat</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>pseudo_data <span class="ot">&lt;-</span> <span class="fu">AggregateExpression</span>(cell_selection, <span class="at">assays =</span> <span class="st">'RNA'</span>, </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">return.seurat =</span> T, <span class="at">group.by =</span> <span class="fu">c</span>(<span class="st">'type'</span>, <span class="st">'immgen_singler_main'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Names of identity class contain underscores ('_'), replacing with dashes ('-')
+Centering and scaling data matrix
+
+This message is displayed once every 8 hours.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(<span class="fu">Cells</span>(pseudo_data))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Ctrl_Monocyte"         "Ctrl_Neutrophils"      "Ctrl_NK-cell"         
+[4] "Ctrl_Platelets"        "Ctrl_Pre-B-cell-CD34-" "Ctrl_T-cells"         </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>pseudo_data<span class="sc">$</span>celltype.type <span class="ot">&lt;-</span> <span class="fu">paste</span>(pseudo_data<span class="sc">$</span>immgen_singler_main, pseudo_data<span class="sc">$</span>type, <span class="at">sep =</span> <span class="st">"_"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>pseudo_data<span class="sc">$</span>celltype.type</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Covid_B-cell                 Covid_BM                Covid_CMP 
+          "B-cell_Covid"               "BM_Covid"              "CMP_Covid" 
+      Covid_Erythroblast         Covid_HSC--G-CSF           Covid_Monocyte 
+    "Erythroblast_Covid"       "HSC--G-CSF_Covid"         "Monocyte_Covid" 
+       Covid_Neutrophils            Covid_NK-cell          Covid_Platelets 
+     "Neutrophils_Covid"          "NK-cell_Covid"        "Platelets_Covid" 
+  Covid_Pre-B-cell-CD34-   Covid_Pro-B-cell-CD34+            Covid_T-cells 
+"Pre-B-cell-CD34-_Covid" "Pro-B-cell-CD34+_Covid"          "T-cells_Covid" 
+             Ctrl_B-cell                  Ctrl_BM                 Ctrl_CMP 
+           "B-cell_Ctrl"                "BM_Ctrl"               "CMP_Ctrl" 
+       Ctrl_Erythroblast          Ctrl_HSC--G-CSF          Ctrl_Macrophage 
+     "Erythroblast_Ctrl"        "HSC--G-CSF_Ctrl"        "Macrophage_Ctrl" 
+           Ctrl_Monocyte         Ctrl_Neutrophils             Ctrl_NK-cell 
+         "Monocyte_Ctrl"       "Neutrophils_Ctrl"           "NK-cell_Ctrl" 
+          Ctrl_Platelets    Ctrl_Pre-B-cell-CD34-             Ctrl_T-cells 
+        "Platelets_Ctrl"  "Pre-B-cell-CD34-_Ctrl"           "T-cells_Ctrl" </code></pre>
+</div>
+</div>
+<p>A continuación, realizamos un análisis de expresión diferencial a nivel de pseudogrupo para los monocitos CD14 y lo comparamos con los resultados anteriores del análisis de expresión diferencial a nivel de célula individual.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Este codigo me falla y es por la cantidad tan pequeña de celulas</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(pseudo_data) <span class="ot">&lt;-</span> <span class="st">"celltype.type"</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>bulk.mono.de <span class="ot">&lt;-</span> <span class="fu">FindMarkers</span>(<span class="at">object =</span> pseudo_data, </span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">ident.1 =</span> <span class="st">"NK-cell_Ctrl"</span>, </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">ident.2 =</span> <span class="st">"NK-cell_Covid"</span>,</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">test.use =</span> <span class="st">"DESeq2"</span>)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bulk.mono.de, <span class="at">n =</span> <span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="paso-9.-guardar-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="paso-9.-guardar-dataset">Paso 9. Guardar dataset</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(dge.list, res.edgeR, cell_selection, <span class="at">file =</span> <span class="st">"output/variables_expression.RData"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(dge.list, res.edgeR, cell_selection, <span class="at">file =</span> <span class="st">"output/variables_expression.RData"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="referencias" class="level2">
