@@ -1,8 +1,8 @@
 ---
 title: "Single cell RNA seq"
-subtitle: "⚔<br/>Expresión diferencial por condiciones e Inferencia de trayectorias"  
+subtitle: "⚔<br/>DEG por condiciones, Inferencia de trayectorias y CellChat"  
 author: "Dra. Evelia Coss"
-date: "15/abril/2026"
+date: "22/abril/2026"
 output:
   xaringan::moon_reader:
     css: 
@@ -138,14 +138,6 @@ background-size: 1210px,210px, cover
 class: inverse, center, middle
 
 `r fontawesome::fa("laptop-file", height = "3em")`
-# Información del dataset y ouput de Cell Ranger
-
----
----
-
-class: inverse, center, middle
-
-`r fontawesome::fa("laptop-file", height = "3em")`
 # Pipeline con **varios datasets**
 
 ---
@@ -187,48 +179,103 @@ class: inverse, center, middle
 
 ---
 
+class: inverse, center, middle
+
+`r fontawesome::fa("atom", height = "3em")`
+# Ciclo celular en scRNA-seq
+
+---
+
+.pull-left[
+## Información general del Ciclo celular 
+
+Para examinar la **variación del ciclo celular** en nuestros datos, asignamos a cada célula una puntuación, basada en la expresión de marcadores de las fases G2/M y S.
+
+- **¿Por qué es importante?**
+  + Genes asociados a fases S y G2/M (ej. *MKI67, TOP2A, CCNB1*) generan variabilidad que puede dominar PCA o clustering.
+  + Si no se controla, puede confundirse con diferencias de condición o linaje.
+]
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='60%', fig.align='center'}
+knitr::include_graphics("figures/cell_cycle.png")
+```
+.content-box-blue[ 
+- **G0:** reposo/quiescencia. Célula no se divide (ej. neuronas).
+- **G1:** crecimiento inicial. La célula aumenta tamaño y componentes.
+- **S:** síntesis. Se replican los cromosomas.
+- **G2:** preparación final. Crece más y organiza el huso mitótico.
+- **M:** mitosis. División nuclear (profase, metafase, anafase, telofase).
+]
+]
+
+
+.footnote[
+Adaptado de [Wikipedia](https://en.wikipedia.org/wiki/Cell_cycle) (Licencia de imagen: CC BY-SA 3.0)
+]
+
+---
+
 .pull-left[
 ## Ciclo celular
 
-Se puede asignar fase de ciclo celular (G1, S, G2/M) usando funciones como `CellCycleScoring` en `Seurat`, que emplea listas de genes asociados a cada fase (`cc.genes.updated.2019$s.genes`).
+Se puede asignar **fase de ciclo celular** (G1, S, G2/M) usando funciones como `CellCycleScoring` en `Seurat`, que emplea listas de genes asociados a cada fase (`cc.genes.updated.2019$s.genes`).
 
-Esto es útil para verificar si la variabilidad entre clusters está influenciada por el ciclo celular y, si es necesario, regredir ese efecto en la normalización.
+Esto es útil para verificar si la variabilidad entre clusters está influenciada por el **ciclo celular** y, si es necesario, regredir ese efecto en la normalización.
 
 🔹 **Qué contesta este análisis:**
 
 - ¿Qué proporción de células está proliferando?
 - ¿El ciclo celular explica la variabilidad entre clusters?
 - ¿Debo corregirlo para evitar sesgos en trayectorias o DE?
+
 ]
 
 .pull-right[
 ```{r, echo=FALSE, out.width='100%', fig.align='center'}
 knitr::include_graphics("figures/cellcycle_example.png")
 ```
+.content-box-yellow[ 
+👉 Ideas claves: 
+- **G0:** reposo/quiescencia (pausa opcional).
+- **G1:** crecimiento inicial.
+- **S:** síntesis de ADN.
+- **G2:** preparación final para dividirse.
+- **M:** mitosis (división nuclear).
 ]
 
+]
+
+.footnote[ [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/articles/cell_cycle_vignette.html), Tutorial [https://satijalab.org/seurat/articles/cell_cycle_vignette](https://satijalab.org/seurat/articles/cell_cycle_vignette)
+]
 
 ---
 
-.pull-left[
-## Ciclo celular
-https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html
-]
+class: inverse, center, middle
 
-.pull-right[
-
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("figures/cell_cycle.png")
-```
-]
+`r fontawesome::fa("atom", height = "3em")`
+# Expresión diferencial entre condiciones y pseudobulk
 
 ---
 
 ## Expresión diferencial entre condiciones
 
+.pull-left[
 - **Objetivo:** comparar condiciones (ej. sano vs enfermo, tratado vs control) dentro de cada tipo celular o cluster.
 - **Responde:** qué genes cambian significativamente entre condiciones.
 - **Uso típico:** cuando tu hipótesis es sobre diferencias moleculares entre grupos.
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("figures/cohort-level_immune_monitoring.jpeg")
+```
+]
+
+.footnote[
+Imagen tomada de: [Rathgeber, etal. Clinical Hematology International](https://chi.scholasticahq.com/article/117961-single-cell-genomics-based-immune-and-disease-monitoring-in-blood-malignancies) 
+]
 
 ---
 
@@ -240,7 +287,7 @@ knitr::include_graphics("figures/cell_cycle.png")
   + Al sumar las cuentas de células de un mismo tipo/condición, reduces ese ruido y obtienes perfiles más estables.
 
 - **¿Qué contesta?**
-  + Permite hacer expresión diferencial robusta entre condiciones, usando herramientas clásicas de bulk (`DESeq2, edgeR, limma`).
+  + Permite hacer **expresión diferencial robusta entre condiciones**, usando herramientas clásicas de bulk (`DESeq2, edgeR, limma`).
   + **Reduce ruido** de célula individual y controla mejor la variabilidad técnica.
   + Responde preguntas de tipo: qué genes cambian en un **tipo celular específico entre condiciones**, con mayor poder estadístico.
   
@@ -252,9 +299,41 @@ knitr::include_graphics("figures/cell_cycle.png")
 - Cuando necesitas resultados **estadísticamente sólidos y comparables con bulk RNA-seq**.
 - Cuando quieres **evitar sesgos** por tratar cada célula como un replicado independiente.
 
-.content-box-blue[ 
-En resumen: aunque el scRNA-seq ya da resolución individual, el pseudobulk se usa para ganar poder estadístico, reducir ruido y obtener resultados más confiables en análisis de expresión diferencial entre condiciones.
+.pull-left[
+1) Definir las agrupaciones (sample/condición/células de interés). Ejemplo: `sample_id, celltype`.
+
+2) Extraer cuentas crudas.  
+
+3) Agrupar por muestra y condición (pseudobulk). 
+
+4) Crear objeto DESeq2
+
+5) [Visualización y análisis](https://satijalab.org/seurat/articles/visualization_vignette)
 ]
+
+.pull-right[
+El pseudobulking en `Seurat` se realiza usando la función `AggregateExpression()`. 
+
+```{r, eval=FALSE}
+pseudo_ifnb <- AggregateExpression(ifnb, assays = "RNA", return.seurat = T, group.by = c("stim", "donor_id", "seurat_annotations"))
+```
+
+]
+
+.content-box-blue[ 
+En resumen: aunque el scRNA-seq ya da resolución individual, el **pseudobulk se usa para ganar poder estadístico, reducir ruido y obtener resultados más confiables** en análisis de expresión diferencial entre condiciones.
+]
+
+.footnote[
+Tutorial: [Differential expression testing](https://satijalab.org/seurat/articles/de_vignette) 
+]
+
+---
+
+class: inverse, center, middle
+
+`r fontawesome::fa("circle-nodes", height = "3em")`
+# Predicción de Trayectorias
 
 ---
 
@@ -269,7 +348,6 @@ En resumen: aunque el scRNA-seq ya da resolución individual, el pseudobulk se u
 - **Resultado**: reconstruye un proceso dinámico y asigna un pseudotime relativo. 
 ]
 
-
 .pull-right[
 Ejemplo: células madre → progenitoras → diferenciadas, siguiendo un “camino” en el espacio de UMAP.
 
@@ -278,11 +356,60 @@ knitr::include_graphics("figures/trajectory_exp1.png")
 ```
 ]
 
+.footnote[
+[Pipelines para inferir la trayectoria](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/trajectory-inference.html) 
+]
+
 ---
 
+## Pipeline con `Slingshot`
+
 .pull-left[
+`Slingshot` es una herramienta de inferencia de linajes unicelulares capaz de trabajar con conjuntos de datos que presentan múltiples ramificaciones. 
+
+**Objetivos:**
+
+- Es una herramienta para inferir linajes celulares en datos de scRNA-seq.
+- Puede manejar datasets con múltiples ramas y bifurcaciones.
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/slingshot.png")
+```
+]
+
+.footnote[ Tutorial de: [Slingshot](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/slingshot/inst/doc/vignette.html)
+]
+
+---
+
+## Pipeline de `Slingshot`
+
+Dos etapas principales:
+
+**1) Inferencia de la estructura global de linajes**
+  + Usa un MST (Minimum Spanning Tree) basado en clusters.
+  + Identifica el número de linajes y los puntos de ramificación.
+  + Permite descubrir linajes nuevos y también incorporar conocimiento biológico (ej. estados terminales).
+
+**2) Inferencia de pseudotiempo**
+  + Ajusta curvas principales simultáneas (principal curves) a los linajes.
+  + Traduce la estructura global en estimaciones estables de pseudotiempo a nivel de célula.
+
+
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("figures/monocle3_new_workflow.png")
+```
+.footnote[Imagen tomada de:
+[Monocle3](https://cole-trapnell-lab.github.io/monocle3/docs/installation/); Tutorial de [Slingshot](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/slingshot/inst/doc/vignette.html)
+]
+
+---
+
 ## **RNA velocity** en UMAP 
 
+.pull-left[
 - **¿Cómo se calcula?:** compara la abundancia de RNA no empalmado (pre-mRNA) vs. RNA empalmado (maduro) para cada gen.
 - **¿De qué depende?:** de datos de scRNA-seq que distinguen reads empalmados vs. no empalmados (ej. protocolos con suficiente resolución).
 - **Resultado**: añade *dirección temporal* al análisis, indicando hacia dónde evoluciona cada célula en el espacio de expresión.
@@ -292,42 +419,92 @@ knitr::include_graphics("figures/trajectory_exp1.png")
   + Complementa pseudotime: mientras pseudotime ordena retrospectivamente, velocity predice prospectivamente.
 ]
 
-No se hace en Seurat directamente, sino con paquetes como scVelo (Python) o velocytoR. Seurat puede servir como punto de partida para exportar matrices.
 
 .pull-right[
+
+.content-box-blue[ 
+No se hace en `Seurat` directamente, sino con paquetes como `scVelo` (Python) o `velocytoR`. Seurat puede servir como punto de partida para exportar matrices.
 ]
-
-
+]
 
 ---
 
 ## Flujo de trabajo sugerido
 
-- 1. **Anotación con SingleR** → obtienes etiquetas de tipo celular.
-- 2. **Control de ciclo celular (opcional)** → asignar fases y decidir si corregirlas.
-- 3. **Expresión diferencial entre condiciones** → comparas sano vs enfermo, tratamiento vs control, dentro de cada tipo celular. Puede hacerse a nivel *single-cell o pseudobulk*.
-- 4. **Trayectorias (opcional)** → aplicar pseudotime/velocity para explorar procesos dinámicos. Si tu pregunta es dinámica, puedes ver cómo cambian las trayectorias entre condiciones.
-5. **Comunicación celular (CellChat, CellPhoneDB, NicheNet)** → analizas interacciones entre poblaciones, basadas en ligando-receptor.
+1) **Anotación con SingleR** → obtienes etiquetas de tipo celular.
+
+2) **Control de ciclo celular (opcional)** → asignar fases y decidir si corregirlas.
+
+3) **Expresión diferencial entre condiciones** → comparas sano vs enfermo, tratamiento vs control, dentro de cada tipo celular. Puede hacerse a nivel *single-cell o pseudobulk*.
+
+4) **Trayectorias (opcional)** → aplicar pseudotime/velocity para explorar procesos dinámicos. Si tu pregunta es dinámica, puedes ver cómo cambian las trayectorias entre condiciones.
+
+5) **Comunicación celular (CellChat, CellPhoneDB, NicheNet)** → analizas interacciones entre poblaciones, basadas en ligando-receptor.
+
+---
+
+class: inverse, center, middle
+
+`r fontawesome::fa("share-nodes", height = "3em")`
+# CellChat
+
+---
+
+## CellChat
+
+.pull-left[
+- Diseñado para inferir y visualizar redes de comunicación célula-célula a partir de datos de scRNA-seq.
+
+- Datos de entrada:
+  + Matriz de expresión normalizada (genes en filas, células en columnas).
+  + Metadatos con anotaciones de grupos celulares (ej. tipos celulares o clusters).
+  
+- Base de datos:
+  + `CellChatDB.human` o `CellChatDB.mouse` (ligando-receptor curados).
+]
+
+.pull-right[
+
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+# 
+knitr::include_graphics("figures/CellChat_Logo.png")
+```
+]
+
+.footnote[ GitHub de: [CellChat](https://github.com/sqjin/CellChat); Tutotial de [CellChat](https://htmlpreview.github.io/?https://github.com/jinworks/CellChat/blob/master/tutorial/CellChat-vignette.html)
+]
 
 ---
 
 
+```{r, echo=FALSE, out.width='60%', fig.align='center'}
+knitr::include_graphics("figures/overview_CellChat.png")
+```
 
+.footnote[ GitHub de: [CellChat](https://github.com/sqjin/CellChat); Tutotial de [CellChat](https://htmlpreview.github.io/?https://github.com/jinworks/CellChat/blob/master/tutorial/CellChat-vignette.html)
+]
 
+---
 
+## Ejemplo: Análisis de comunicación neuronal-microglial (PCDH9high)
 
+Se utilizó el programa CellChat para explorar posibles interacciones ligando-receptor en la comunicación bidireccional entre neuronas y microglía (PCDH9high).
+
+```{r, echo=FALSE, out.width='40%', fig.align='center'}
+knitr::include_graphics("figures/example_cellchat2.png")
+```
+Fig. 6: Cell–cell communication of the neurogenic niches in the prefrontal cortex and hippocampus.
+
+.footnote[ [Chen, *et al*, 2024, *nature medicine*](https://www.nature.com/articles/s41591-024-03150-z)
+]
 
 ---
 
+## Human Cell Atlas - Brain Cell Atlas
 
----
-
-
----
-class: center, middle
-
-`r fontawesome::fa("laptop-file", height = "3em")`
-# Zenodo
+- Título:  A brain cell atlas integrating single-cell transcriptomes across human brain regions
+- Link del artículo: https://www.nature.com/articles/s41591-024-03150-z
+- Presentación:  https://docs.google.com/presentation/d/1eft2wKhTyt3cFy_lLkVYwJFaDsukAtSfqjw2xsHOAlA/edit?usp=sharing
 
 ---
 
@@ -342,6 +519,6 @@ Respira y coméntame tus dudas.
 knitr::include_graphics("figures/cat.png")
 ```
 
-.left[.footnote[.black[
+.footnote[
 Imagen tomada de: [Allison Horst](https://allisonhorst.com/) 
-]]]
+]

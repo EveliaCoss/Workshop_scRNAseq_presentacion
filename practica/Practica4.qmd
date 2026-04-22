@@ -33,7 +33,7 @@ library(celldex)
 # Expresion diferencial
 library(edgeR)
 library(RColorBrewer)
-# trayetcoria
+# Trayectoria
 library(plotly) # figura interactiva
 options(rgl.printRglwidget = TRUE)
 library(sparseMatrixStats)
@@ -219,7 +219,7 @@ DimPlot(pbmc_annotated.celltype) +
   NoAxes()
 ```
 
-## **Paso 5. Ciclo celular**
+## **Paso 5. Control del Ciclo celular**
 
 [![](images/cell_cycle.png)](https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionIV/lessons/SC_clustering_analysis.html)
 
@@ -361,7 +361,7 @@ VlnPlot(alldata,
 
 As you can see, we have many sex chromosome related genes among the top DE genes. And if you remember from the QC lab, we have unbalanced sex distribution among our subjects, so this may not be related to covid at all.
 
-## Paso 6. Pseudobulk (opcional)
+## Paso 8. Pseudobulk
 
 ```{r}
 cell_selection <- SetIdent(pbmc_annotated, value = "orig.ident")
@@ -371,6 +371,7 @@ table(cell_selection$orig.ident)
 ```{r}
 # get the count matrix for all cells
 DGE_DATA <- GetAssayData(cell_selection, assay = "RNA", layer = "counts")
+
 # Compute pseudobulk
 mm <- Matrix::sparse.model.matrix(~ 0 + cell_selection$orig.ident)
 pseudobulk <- DGE_DATA %*% mm
@@ -415,6 +416,31 @@ DotPlot(cell_selection,
 ```
 
 As you can see, even if we find few genes, they seem to make sense across all the patients.
+
+```{r}
+# Pseudobulking con Seurat
+pseudo_data <- AggregateExpression(cell_selection, assays = 'RNA', 
+                  return.seurat = T, group.by = c('type', 'immgen_singler_main'))
+
+tail(Cells(pseudo_data))
+```
+
+```{r}
+pseudo_data$celltype.type <- paste(pseudo_data$immgen_singler_main, pseudo_data$type, sep = "_")
+pseudo_data$celltype.type
+```
+
+Next, we perform DE testing on the pseudobulk level for CD14 monocytes, and compare it against the previous single-cell-level DE results.
+
+```{r}
+Idents(pseudo_data) <- "celltype.type"
+
+bulk.mono.de <- FindMarkers(object = pseudo_data, 
+                         ident.1 = "CD14 Monocyte_Ctrl", 
+                         ident.2 = "CD14 Monocyte_Covid",
+                         test.use = "DESeq2")
+head(bulk.mono.de, n = 15)
+```
 
 ## Paso 9. Guardar dataset
 

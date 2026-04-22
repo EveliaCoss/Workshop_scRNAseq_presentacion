@@ -4,6 +4,15 @@ format: html
 editor: visual
 ---
 
+```{r}
+devtools::install_github("jinworks/CellChat")
+library(CellChat)
+library(patchwork)
+options(stringsAsFactors = FALSE)
+
+cellchat_example.png
+```
+
 ## Paso 8. Predicción de Trayectorias con **Slingshot**
 
 Definiendo la paleta de cikries
